@@ -12,7 +12,7 @@ function Navbar() {
           <img src="/craftkitlogo.png" alt="Logo" className="h-6" />
         </div>
         <nav className="hidden md:flex items-center gap-6 text-gray-700 font-medium">
-          <a className="hover:text-primary">
+          <a onClick={()=>router.push("/Blog")} className="hover:text-primary">
             Blog
           </a>
           <a onClick={()=>router.push("/AboutPage")} className="hover:text-primary">

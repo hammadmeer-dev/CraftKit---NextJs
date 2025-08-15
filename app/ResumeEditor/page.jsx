@@ -1,45 +1,47 @@
 "use client";
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import EditorSidebar from '../components/EditorSidebar';
 import PreviewPanal from '../components/PreviewPanal';
 import EditContentSection from '../components/EditContentSection';
 
-
 export default function ResumeEditor() {
-  const [currentView, setCurrentView] = useState('dashboard'); // 'dashboard' or 'editor'
   const [resumeData, setResumeData] = useState({
-      title: 'Untitled Resume',
-      templateId: 'modern-minimalist',
-      data: {
-        personalInfo: {
-          fullName: '',
-          profession: '',
-          location: '',
-          phone: '',
-          email: '',
-          portfolioWebsite: ''
-        },
-        summary: '',
-        workExperience: [],
-        education: [],
-        skills: [],
-        projects: [],
-        certifications: []
-      }
-    });
+    title: 'Untitled Resume',
+    templateId: 'modern-minimalist',
+    data: {
+      personalInfo: {
+        fullName: '',
+        profession: '',
+        location: '',
+        phone: '',
+        email: '',
+        portfolioWebsite: ''
+      },
+      summary: '',
+      workExperience: [],
+      education: [],
+      skills: [],
+      projects: [],
+      certifications: []
+    }
+  });
 
   return (
     <div className="min-h-screen bg-gray-50 flex">
       {/* Sidebar */}
-      <EditorSidebar/>
+      <EditorSidebar />
 
       {/* Editor Content */}
-      <div className="flex-1 flex">
+      <div className="flex-1 flex flex-col md:flex-row">
         {/* Form Panel */}
-       <EditContentSection resumeData={resumeData} setResumeData={setResumeData}/>
+        <div className="w-full md:w-1/2 border-b md:border-b-0 md:border-r">
+          <EditContentSection resumeData={resumeData} setResumeData={setResumeData} />
+        </div>
 
         {/* Preview Panel */}
-        <PreviewPanal resumeData={resumeData}/>
+        <div className="w-full md:w-1/2">
+          <PreviewPanal resumeData={resumeData} />
+        </div>
       </div>
     </div>
   );

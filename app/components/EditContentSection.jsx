@@ -1,30 +1,26 @@
-import React,{useState,useEffect} from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { 
-  FileText, 
-  Download, 
-  Settings, 
-  Home,
-  LogOut,
-  ChevronDown,
-  ChevronUp,
-  Save,
-  Plus,
-  Trash2,
-  Sidebar
-} from 'lucide-react';
-import { loadResumes,generateId,saveResume } from '@/utils/resumeStorage';
-import { Button } from '@/components/ui/button';
-
-const EditContentSection = ({resumeData,setResumeData}) => {
-    const [currentResumeId, setCurrentResumeId] = useState(null);
-  const [saveStatus, setSaveStatus] = useState('All changes saved');
-  
-  // Form sections state
+import React, { useState, useEffect } from "react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { PersonalInfoSection } from "../components/Form/PersonelInfoSection";
+import { SummarySection } from "../components/Form/SummarySection";
+import { ListSection } from "../components/Form/ListSection";
+import { SaveExportSection } from "../components/Form/SaveExportSection";
+import { loadResumes, generateId, saveResume } from "@/utils/resumeStorage";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ChevronUp, ChevronDown } from "lucide-react";
+import { useTemplateStore } from "../Store/templateStore";
+const EditContentSection = ({ resumeData, setResumeData }) => {
+  const [currentResumeId, setCurrentResumeId] = useState(null);
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [saveStatus, setSaveStatus] = useState("All changes saved");
+  const template = useTemplateStore((state) => state.selectedTemplate);
   const [expandedSections, setExpandedSections] = useState({
     personalInfo: true,
     summary: false,
@@ -32,13 +28,9 @@ const EditContentSection = ({resumeData,setResumeData}) => {
     education: false,
     skills: false,
     projects: false,
-    certifications: false
+    certifications: false,
   });
 
-  // Resume data state
-  
-
-  // Load resumes on component mount
   useEffect(() => {
     loadResumesFromDB();
   }, []);
@@ -46,250 +38,248 @@ const EditContentSection = ({resumeData,setResumeData}) => {
   const loadResumesFromDB = async () => {
     try {
       const savedResumes = await loadResumes();
-      setResumes(savedResumes);
+      // Handle loaded resumes if needed
     } catch (error) {
-      console.error('Error loading resumes:', error);
+      console.error("Error loading resumes:", error);
     }
   };
 
   const handleSaveResume = async () => {
     try {
-      setSaveStatus('Saving...');
-      
+      setSaveStatus("Saving...");
       const resumeToSave = {
         id: currentResumeId || generateId(),
-        ...resumeData
+        ...resumeData,
       };
-
       await saveResume(resumeToSave);
-      
-      if (!currentResumeId) {
-        setCurrentResumeId(resumeToSave.id);
-      }
-      
-      await loadResumesFromDB();
-      setSaveStatus('All changes saved');
-      
-      setTimeout(() => setSaveStatus('All changes saved'), 2000);
+      if (!currentResumeId) setCurrentResumeId(resumeToSave.id);
+      setSaveStatus("All changes saved");
     } catch (error) {
-      console.error('Error saving resume:', error);
-      setSaveStatus('Error saving');
+      console.error("Error saving resume:", error);
+      setSaveStatus("Error saving");
     }
   };
 
   const toggleSection = (section) => {
-    setExpandedSections(prev => ({
-      ...prev,
-      [section]: !prev[section]
-    }));
+    setExpandedSections((prev) => ({ ...prev, [section]: !prev[section] }));
+  };
+  const toggleTitleExpantion = (section) => {
+    setIsExpanded(!isExpanded);
   };
 
-
-
-  const editResume = (resume) => {
-    setCurrentResumeId(resume.id);
-    setResumeData(resume);
-    setCurrentView('editor');
-  }
-      const updatePersonalInfo = (field, value) => {
-    setResumeData(prev => ({
+  const updatePersonalInfo = (field, value) => {
+    setResumeData((prev) => ({
       ...prev,
       data: {
         ...prev.data,
-        personalInfo: {
-          ...prev.data.personalInfo,
-          [field]: value
-        }
-      }
+        personalInfo: { ...prev.data.personalInfo, [field]: value },
+      },
     }));
-    setSaveStatus('Unsaved changes');
+    setSaveStatus("Unsaved changes");
+  };
+  const updateTitle = (value) => {
+    setResumeData((prev) => ({
+      ...prev,
+      title: value, // ✅ direct update at root
+    }));
+    setSaveStatus("Unsaved changes");
   };
 
   const updateResumeField = (field, value) => {
-    setResumeData(prev => ({
+    setResumeData((prev) => ({
+      ...prev,
+      data: { ...prev.data, [field]: value },
+    }));
+    setSaveStatus("Unsaved changes");
+  };
+
+  const addEntry = (section) => {
+    const newEntry = { id: generateId(), ...defaultFields(section) };
+    setResumeData((prev) => ({
+      ...prev,
+      data: { ...prev.data, [section]: [...prev.data[section], newEntry] },
+    }));
+    setSaveStatus("Unsaved changes");
+  };
+
+  const updateEntryField = (section, id, field, value) => {
+    setResumeData((prev) => ({
       ...prev,
       data: {
         ...prev.data,
-        [field]: value
-      }
+        [section]: prev.data[section].map((item) =>
+          item.id === id ? { ...item, [field]: value } : item
+        ),
+      },
     }));
-    setSaveStatus('Unsaved changes');
+    setSaveStatus("Unsaved changes");
   };
 
-  const createNewResume = () => {
-    setCurrentResumeId(null);
-    setResumeData({
-      title: 'Untitled Resume',
-      templateId: 'modern-minimalist',
+  const deleteEntry = (section, id) => {
+    setResumeData((prev) => ({
+      ...prev,
       data: {
-        personalInfo: {
-          fullName: '',
-          profession: '',
-          location: '',
-          phone: '',
-          email: '',
-          portfolioWebsite: ''
-        },
-        summary: '',
-        workExperience: [],
-        education: [],
-        skills: [],
-        projects: [],
-        certifications: []
-      }
-    });
-    setCurrentView('editor');
+        ...prev.data,
+        [section]: prev.data[section].filter((item) => item.id !== id),
+      },
+    }));
+    setSaveStatus("Unsaved changes");
   };
+
+  const defaultFields = (section) => {
+    switch (section) {
+      case "workExperience":
+        return {
+          role: "",
+          company: "",
+          startDate: "",
+          endDate: "",
+          description: "",
+        };
+      case "education":
+        return {
+          degree: "",
+          school: "",
+          startDate: "",
+          endDate: "",
+          description: "",
+        };
+      case "skills":
+        return { name: "" };
+      case "projects":
+        return { name: "", description: "", link: "" };
+      case "certifications":
+        return { name: "", issuer: "", date: "" };
+      default:
+        return {};
+    }
+  };
+  const handleSubmitEntry = (section, id) => {
+    // Find the specific entry
+    const entry = resumeData.data[section].find((item) => item.id === id);
+
+    // Validate the entry (example validation - adjust based on your requirements)
+    if (section === "workExperience") {
+      if (!entry.role || !entry.company) {
+        alert("Please fill in both role and company fields");
+        return;
+      }
+    } else if (section === "education") {
+      if (!entry.degree || !entry.school) {
+        alert("Please fill in both degree and school fields");
+        return;
+      }
+    }
+
+    // Mark as submitted (you could add this to your data structure)
+    const updateTitle = (value) => {
+      setResumeData((prev) => ({
+        ...prev,
+        title: value, // title should be at root level if that's where you keep it
+      }));
+      setSaveStatus("Unsaved changes");
+    };
+
+    // Update save status
+    setSaveStatus("Unsaved changes");
+
+    // Optional: Show feedback to user
+    console.log(`${section.slice(0, -1)} entry submitted successfully`);
+  };
+
   return (
-     <div className="w-1/2 bg-white border-r overflow-y-auto">
-          <div className="p-6">
-            {/* Header */}
-            <div className="flex items-center justify-between mb-6">
-              <h1 className="text-2xl font-bold text-gray-900">Resume Editor</h1>
-              <div className="flex items-center space-x-3">
-                <Select value={resumeData.templateId} onValueChange={(value) => setResumeData(prev => ({...prev, templateId: value}))}>
-                  <SelectTrigger className="w-48">
-                    <SelectValue placeholder="Template" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="modern-minimalist">Modern Minimalist</SelectItem>
-                    <SelectItem value="classic">Classic</SelectItem>
-                    <SelectItem value="creative">Creative</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            {/* Personal Info Section */}
-            <Card className="mb-4">
-              <CardHeader 
-                className="cursor-pointer"
-                onClick={() => toggleSection('personalInfo')}
-              >
-                <div className="flex items-center justify-between">
-                  <CardTitle className="text-lg">Personal Info</CardTitle>
-                  {expandedSections.personalInfo ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
-                </div>
-              </CardHeader>
-              {expandedSections.personalInfo && (
-                <CardContent className="space-y-4">
-                  <div>
-                    <Label htmlFor="fullName">Full Name</Label>
-                    <Input 
-                      id="fullName"
-                      value={resumeData.data.personalInfo.fullName}
-                      onChange={(e) => updatePersonalInfo('fullName', e.target.value)}
-                      placeholder="Liam Basil"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="profession">Profession</Label>
-                    <Input 
-                      id="profession"
-                      value={resumeData.data.personalInfo.profession}
-                      onChange={(e) => updatePersonalInfo('profession', e.target.value)}
-                      placeholder="Graphic Designer"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="location">Location</Label>
-                    <Input 
-                      id="location"
-                      value={resumeData.data.personalInfo.location}
-                      onChange={(e) => updatePersonalInfo('location', e.target.value)}
-                      placeholder="San Francisco, CA"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="phone">Phone</Label>
-                    <Input 
-                      id="phone"
-                      value={resumeData.data.personalInfo.phone}
-                      onChange={(e) => updatePersonalInfo('phone', e.target.value)}
-                      placeholder="+1 415 555 1234"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="email">Email</Label>
-                    <Input 
-                      id="email"
-                      type="email"
-                      value={resumeData.data.personalInfo.email}
-                      onChange={(e) => updatePersonalInfo('email', e.target.value)}
-                      placeholder="liam.basil@email.com"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="portfolio">Portfolio Website</Label>
-                    <Input 
-                      id="portfolio"
-                      value={resumeData.data.personalInfo.portfolioWebsite}
-                      onChange={(e) => updatePersonalInfo('portfolioWebsite', e.target.value)}
-                      placeholder="liambasilportfolio.com"
-                    />
-                  </div>
-                </CardContent>
-              )}
-            </Card>
-
-            {/* Other Sections */}
-            {['summary', 'workExperience', 'education', 'skills', 'projects', 'certifications'].map(section => (
-              <Card key={section} className="mb-4">
-                <CardHeader 
-                  className="cursor-pointer"
-                  onClick={() => toggleSection(section)}
-                >
-                  <div className="flex items-center justify-between">
-                    <CardTitle className="text-lg capitalize">
-                      {section === 'workExperience' ? 'Work Experience' : section}
-                    </CardTitle>
-                    {expandedSections[section] ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
-                  </div>
-                </CardHeader>
-                {expandedSections[section] && (
-                  <CardContent>
-                    {section === 'summary' ? (
-                      <Textarea 
-                        value={resumeData.data.summary}
-                        onChange={(e) => updateResumeField('summary', e.target.value)}
-                        placeholder="Write your professional summary here..."
-                        rows={4}
-                      />
-                    ) : (
-                      <div className="text-gray-500 text-center py-8">
-                        <p>Click to add {section === 'workExperience' ? 'work experience' : section}</p>
-                        <Button variant="outline" size="sm" className="mt-2">
-                          <Plus className="w-4 h-4 mr-2" />
-                          Add {section === 'workExperience' ? 'Experience' : section.slice(0, -1)}
-                        </Button>
-                      </div>
-                    )}
-                  </CardContent>
-                )}
-              </Card>
-            ))}
-
-            {/* Save Button */}
-            <div className="sticky bottom-0 bg-white pt-4 border-t">
-              <Button 
-                onClick={handleSaveResume}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white"
-                disabled={saveStatus === 'Saving...'}
-              >
-                <Save className="w-4 h-4 mr-2" />
-                {saveStatus === 'Saving...' ? 'Saving...' : 'Save Resume'}
-              </Button>
-              <Button 
-                variant="outline"
-                className="w-full mt-2"
-              >
-                <Download className="w-4 h-4 mr-2" />
-                Export PDF
-              </Button>
-            </div>
-          </div>
+    <div className="bg-white border-r overflow-y-auto">
+      <div className="p-6">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-6">
+          <h1 className="text-2xl font-bold text-gray-900">
+            {resumeData.title}
+          </h1>
+          <Select
+            value={resumeData.templateId}
+            onValueChange={(value) =>
+              setResumeData((prev) => ({ ...prev, templateId: value }))
+            }
+          >
+            <SelectTrigger className="w-48">
+              <SelectValue placeholder="Template" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="modern-minimalist">
+                {template.name}
+              </SelectItem>
+              <SelectItem value="classic">Classic</SelectItem>
+              <SelectItem value="creative">Creative</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
-  )
-}
+        <Card className="mb-4">
+          <CardHeader className="cursor-pointer" onClick={toggleTitleExpantion}>
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-lg">Title</CardTitle>
+              {isExpanded ? (
+                <ChevronUp className="w-5 h-5" />
+              ) : (
+                <ChevronDown className="w-5 h-5" />
+              )}
+            </div>
+          </CardHeader>
+          {isExpanded && (
+            <CardContent className="space-y-4">
+              <Label htmlFor={resumeData.title}>Title</Label>
+              <Input
+                value={resumeData.value}
+                onChange={(e) => updateTitle(e.target.value)}
+                placeholder={resumeData.value}
+              />
+            </CardContent>
+          )}
+        </Card>
 
-export default EditContentSection
+        {/* Sections */}
+        <PersonalInfoSection
+          personalInfo={resumeData.data.personalInfo}
+          updatePersonalInfo={updatePersonalInfo}
+          isExpanded={expandedSections.personalInfo}
+          toggleSection={() => toggleSection("personalInfo")}
+        />
+
+        <SummarySection
+          summary={resumeData.data.summary}
+          updateSummary={(value) => updateResumeField("summary", value)}
+          isExpanded={expandedSections.summary}
+          toggleSection={() => toggleSection("summary")}
+        />
+
+        {[
+          "workExperience",
+          "education",
+          "skills",
+          "projects",
+          "certifications",
+        ].map((section) => (
+          <ListSection
+            key={section}
+            title={section}
+            items={resumeData.data[section]}
+            defaultItem={defaultFields(section)}
+            onAdd={() => addEntry(section)}
+            onUpdate={(id, field, value) =>
+              updateEntryField(section, id, field, value)
+            }
+            onDelete={(id) => deleteEntry(section, id)}
+            onSubmit={(id) => {
+              handleSubmitEntry(section, id);
+            }}
+            isExpanded={expandedSections[section]}
+            toggleSection={() => toggleSection(section)}
+          />
+        ))}
+
+        <SaveExportSection onSave={handleSaveResume} saveStatus={saveStatus} />
+      </div>
+    </div>
+  );
+};
+
+export default EditContentSection;

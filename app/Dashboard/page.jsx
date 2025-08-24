@@ -3,6 +3,7 @@ import React, { useState,useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { useRouter, usePathname } from "next/navigation";
 import { 
   User, 
   FileText, 
@@ -22,6 +23,7 @@ import { deleteResumeFromDB, loadResumes } from '@/utils/resumeStorage';
 import EditorSidebar from '../components/EditorSidebar';
 
 export default function Dashboard() {
+  const router = useRouter();
   const [resumes, setResumes] = useState([]);
   useEffect(() => {
       loadResumesFromDB();
@@ -37,7 +39,7 @@ export default function Dashboard() {
 
 
   const handleEdit = (id) => {
-    console.log('Edit resume:', id);
+    router.push(`/ResumeEditor/${id}`);
   };
 
   const handleDelete = (id) => {

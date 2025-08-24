@@ -52,6 +52,17 @@ export const deleteResumeFromDB = async (resumeId) => {
   });
 };
 
+export const loadResumeById = async (resumeId) => {
+  const db = await initDB();
+  const transaction = db.transaction([STORE_NAME], 'readonly');
+  const store = transaction.objectStore(STORE_NAME);
+  return new Promise((resolve, reject) => {
+    const request = store.get(resumeId);
+    request.onerror = () => reject(request.error);
+    request.onsuccess = () => resolve(request.result);
+  });
+};
+
 export const generateId = () => {
   return 'resume_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now();
 }; 

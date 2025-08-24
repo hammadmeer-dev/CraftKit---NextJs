@@ -101,19 +101,19 @@ const EditContentSection = ({ resumeData, setResumeData }) => {
     }));
     setSaveStatus("Unsaved changes");
   };
+const updateEntryField = (section, id, field, value) => {
+  setResumeData((prev) => ({
+    ...prev,
+    data: {
+      ...prev.data,
+      [section]: prev.data[section].map((item) =>
+        item.id === id ? { ...item, [field]: value } : item
+      ),
+    },
+  }));
+  setSaveStatus("Unsaved changes");
+};
 
-  const updateEntryField = (section, id, field, value) => {
-    setResumeData((prev) => ({
-      ...prev,
-      data: {
-        ...prev.data,
-        [section]: prev.data[section].map((item) =>
-          item.id === id ? { ...item, [field]: value } : item
-        ),
-      },
-    }));
-    setSaveStatus("Unsaved changes");
-  };
 
   const deleteEntry = (section, id) => {
     setResumeData((prev) => ({
@@ -154,36 +154,30 @@ const EditContentSection = ({ resumeData, setResumeData }) => {
         return {};
     }
   };
+
   const handleSubmitEntry = (section, id) => {
-    // Find the specific entry
     const entry = resumeData.data[section].find((item) => item.id === id);
 
-    // Validate the entry (example validation - adjust based on your requirements)
-    if (section === "workExperience") {
-      if (!entry.role || !entry.company) {
-        alert("Please fill in both role and company fields");
-        return;
-      }
-    } else if (section === "education") {
-      if (!entry.degree || !entry.school) {
+    // Validation
+     if (section === "education") {
+      if (!entry.degree?.trim() || !entry.school?.trim()) {
         alert("Please fill in both degree and school fields");
         return;
       }
     }
 
-    // Mark as submitted (you could add this to your data structure)
-    const updateTitle = (value) => {
-      setResumeData((prev) => ({
-        ...prev,
-        title: value, // title should be at root level if that's where you keep it
-      }));
-      setSaveStatus("Unsaved changes");
-    };
+    // Mark as submitted
+    setResumeData((prev) => ({
+      ...prev,
+      data: {
+        ...prev.data,
+        [section]: prev.data[section].map((item) =>
+          item.id === id ? { ...item, submitted: true } : item
+        ),
+      },
+    }));
 
-    // Update save status
     setSaveStatus("Unsaved changes");
-
-    // Optional: Show feedback to user
     console.log(`${section.slice(0, -1)} entry submitted successfully`);
   };
 
@@ -206,8 +200,9 @@ const EditContentSection = ({ resumeData, setResumeData }) => {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="modern-minimalist">
-                {template.name}
+                {template?.name || "Modern Minimalist"}
               </SelectItem>
+
               <SelectItem value="classic">Classic</SelectItem>
               <SelectItem value="creative">Creative</SelectItem>
             </SelectContent>
@@ -226,11 +221,12 @@ const EditContentSection = ({ resumeData, setResumeData }) => {
           </CardHeader>
           {isExpanded && (
             <CardContent className="space-y-4">
-              <Label htmlFor={resumeData.title}>Title</Label>
+              <Label htmlFor="resumeTitle">Title</Label>
               <Input
-                value={resumeData.value}
+                id="resumeTitle"
+                value={resumeData.title || ""}
                 onChange={(e) => updateTitle(e.target.value)}
-                placeholder={resumeData.value}
+                placeholder="Enter resume title"
               />
             </CardContent>
           )}

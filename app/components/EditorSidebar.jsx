@@ -9,21 +9,18 @@ import {
   ArrowRightFromLine,
   ArrowLeftFromLine,
 } from "lucide-react";
-import { useRouter,usePathname } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 
-export default function EditorSidebar({
-  saveStatus,
-}) {
+export default function EditorSidebar({ saveStatus }) {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const pathname = usePathname();
-  const currentView =
-  pathname === "/Dashboard"
+  const currentView = pathname.startsWith("/Dashboard")
     ? "dashboard"
-    : pathname === "/ResumeEditor"
+    : pathname.startsWith("/editor")
     ? "editor"
-    : "Templates"
+    : pathname.startsWith("/Templates")
     ? "templates"
     : "";
 
@@ -98,6 +95,7 @@ export default function EditorSidebar({
               {isOpen && <span className="ml-3">Resume Editor</span>}
             </button>
           </li>
+
           <li>
             <button
               onClick={() => {

@@ -6,25 +6,27 @@ import EditContentSection from '../components/EditContentSection';
 
 export default function ResumeEditor() {
   const [resumeData, setResumeData] = useState({
-    title: 'Untitled Resume',
-    templateId: 'modern-minimalist',
-    data: {
-      personalInfo: {
-        fullName: '',
-        profession: '',
-        location: '',
-        phone: '',
-        email: '',
-        portfolioWebsite: ''
-      },
-      summary: '',
-      workExperience: [],
-      education: [],
-      skills: [],
-      projects: [],
-      certifications: []
-    }
-  });
+  title: 'Untitled Resume',
+  templateId: 'modern-minimalist',
+  data: {
+    personalInfo: {
+      fullName: '',
+      profession: '',
+      location: '',
+      phone: '',
+      email: '',
+      portfolioWebsite: '',
+      profileImage: '' // 🆕 Added image field
+    },
+    summary: '',
+    workExperience: [],
+    education: [],
+    skills: [],
+    projects: [],
+    certifications: []
+  }
+});
+
 
   return (
     <div className="min-h-screen bg-gray-50 flex">

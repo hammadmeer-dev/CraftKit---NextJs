@@ -146,10 +146,7 @@ export default function EditorSidebar({ saveStatus }) {
         {currentView === "editor" && isOpen && (
           <p className="text-xs text-gray-500 mb-2">{saveStatus}</p>
         )}
-        <button className="flex items-center space-x-2 text-sm text-gray-500 hover:text-gray-700 w-full">
-          <LogOut className="w-4 h-4 flex-shrink-0" />
-          {isOpen && <span>Logout</span>}
-        </button>
+
       </div>
     </div>
   );

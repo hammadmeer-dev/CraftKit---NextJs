@@ -1,139 +1,168 @@
 import React from "react";
 
-export default function CreativeResume({ resumeData }) {
-  if (!resumeData) {
-    return <p className="text-center text-gray-500">No resume data provided</p>;
-  }
-
+const PrabhaDinResume = ({ resumeData }) => {
+  // Extract data from the provided resume
+    const {
+    personalInfo,
+    summary,
+    workExperience,
+    education,
+    skills,
+    projects,
+    certifications,languages,personalDetails,hobby
+  } = { ...resumeData.data };
   return (
-    <div className="flex">
-      {/* Left Section */}
-      <div className="w-2/3 bg-white shadow-lg rounded-lg p-6">
-        {/* Header */}
-        <h1 className="text-3xl font-bold text-green-700">{resumeData.name}</h1>
-        <h2 className="text-lg font-medium text-gray-600">
-          {resumeData.title}
-        </h2>
-        <p className="mt-3 text-sm text-gray-700">{resumeData.summary}</p>
+    <div
+      className="bg-white shadow-lg rounded-lg p-8 grid grid-cols-3 gap-6 overflow-hidden"
+      style={{
+        width: "794px",
+        height: "1123px",
+        fontSize: "12px",
+        lineHeight: "1.4",
+      }}
+    >
+      {/* Left Sidebar */}
+      <div className="col-span-1 border-r pr-4">
+        {/* Personal Info */}
+        <div className="mb-6">
+          <h2 className="text-base font-semibold">{personalInfo.fullName}</h2>
+          <p className="text-gray-600 text-sm">{personalInfo.profession}</p>
+          <p className="mt-2 text-xs">{personalInfo.location}</p>
+          <p className="text-xs">{personalInfo.phone}</p>
+          <p className="text-xs">{personalInfo.email}</p>
+          {personalInfo.portfolioWebsite && (
+            <a
+              href={personalInfo.portfolioWebsite}
+              className="text-blue-600 text-xs underline"
+              target="_blank"
+              rel="noreferrer"
+            >
+              {personalInfo.portfolioWebsite}
+            </a>
+          )}
+        </div>
 
-        {/* Work History */}
-        <section className="mt-6">
-          <h3 className="text-xl font-bold text-green-700 border-b pb-1">
-            Work History
-          </h3>
-          {resumeData.workHistory?.map((job, idx) => (
-            <div key={idx} className="mt-4">
-              <p className="text-sm text-gray-500">
-                {job.startDate} - {job.endDate}
-              </p>
-              <h4 className="font-semibold">{job.position}</h4>
-              <p className="italic">{job.company}</p>
-              <ul className="list-disc ml-5 mt-2 text-sm text-gray-700">
-                {job.responsibilities?.map((item, i) => (
-                  <li key={i}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </section>
-
-        {/* Education */}
-        <section className="mt-6">
-          <h3 className="text-xl font-bold text-green-700 border-b pb-1">
-            Education
-          </h3>
-          {resumeData.education?.map((edu, idx) => (
-            <div key={idx} className="mt-4">
-              <p className="text-sm text-gray-500">
-                {edu.startDate} - {edu.endDate}
-              </p>
-              <h4 className="font-semibold">{edu.degree}</h4>
-              <p className="italic">{edu.institution}</p>
-            </div>
-          ))}
-        </section>
-
-        {/* Certificates */}
-        <section className="mt-6">
-          <h3 className="text-xl font-bold text-green-700 border-b pb-1">
-            Certificates
-          </h3>
-          {resumeData.certificates?.map((cert, idx) => (
-            <div key={idx} className="mt-2">
-              <p className="text-sm text-gray-500">{cert.year}</p>
-              <p>{cert.name}</p>
-            </div>
-          ))}
-        </section>
-
-        {/* Hobby */}
-        <section className="mt-6">
-          <h3 className="text-xl font-bold text-green-700 border-b pb-1">
-            Hobby
-          </h3>
-          <p className="mt-2 text-sm text-gray-700">{resumeData.hobby}</p>
-        </section>
-      </div>
-
-      {/* Right Section */}
-      <div className="w-1/3 bg-gray-50 shadow-lg rounded-lg p-6 ml-6">
-        {/* Image */}
-        {resumeData.personalInfo?.image && (
-          <div className="w-full flex justify-center">
-            <img
-              src={resumeData.personalInfo.image}
-              alt="Profile"
-              className="rounded-lg w-40 h-40 object-cover"
-            />
+        {/* Skills */}
+        {skills.length > 0 && (
+          <div className="mb-6">
+            <h3 className="text-sm font-semibold border-b pb-1 mb-2">Skills</h3>
+            <ul className="list-disc list-inside text-xs text-gray-700 space-y-1">
+              {skills.map((skill, idx) => (
+                <li key={idx}>{skill.name}</li>
+              ))}
+            </ul>
           </div>
         )}
 
-        {/* Personal Info */}
-        <section className="mt-6">
-          <h3 className="text-lg font-bold text-green-700">Personal Info</h3>
-          <p className="mt-2 text-sm">
-            <strong>Email:</strong> {resumeData.personalInfo?.email}
-          </p>
-          <p className="text-sm">
-            <strong>Phone:</strong> {resumeData.personalInfo?.phone}
-          </p>
-          <p className="text-sm">
-            <strong>LinkedIn:</strong> {resumeData.personalInfo?.linkedin}
-          </p>
-          <p className="text-sm">
-            <strong>Citizenship:</strong> {resumeData.personalInfo?.citizenship}
-          </p>
-          <p className="text-sm">
-            <strong>DOB:</strong> {resumeData.personalInfo?.dob}
-          </p>
-          <p className="text-sm">
-            <strong>Marital Status:</strong>{" "}
-            {resumeData.personalInfo?.maritalStatus}
-          </p>
-        </section>
-
-        {/* Skills */}
-        <section className="mt-6">
-          <h3 className="text-lg font-bold text-green-700">Skills</h3>
-          <ul className="list-disc ml-5 mt-2 text-sm text-gray-700">
-            {resumeData.skills?.map((skill, idx) => (
-              <li key={idx}>{skill}</li>
-            ))}
-          </ul>
-        </section>
-
         {/* Languages */}
-        <section className="mt-6">
-          <h3 className="text-lg font-bold text-green-700">Languages</h3>
-          <ul className="list-disc ml-5 mt-2 text-sm text-gray-700">
-            {resumeData.languages?.map((lang, idx) => (
-              <li key={idx}>
-                {lang.language} - {lang.level}
-              </li>
+        {languages?.length > 0 && (
+          <div className="mb-6">
+            <h3 className="text-sm font-semibold border-b pb-1 mb-2">Languages</h3>
+            <ul className="list-disc list-inside text-xs text-gray-700 space-y-1">
+              {languages.map((language, idx) => (
+                <li key={idx}>{language.name}</li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {/* Certifications */}
+        {certifications.length > 0 && (
+          <div className="mb-6">
+            <h3 className="text-sm font-semibold border-b pb-1 mb-2">Certifications</h3>
+            <ul className="list-disc list-inside text-xs text-gray-700 space-y-1">
+              {certifications.map((cert, idx) => (
+                <li key={idx}>
+                  {cert.name}
+                  {cert.year && <span className="text-xs text-gray-600"> ({cert.year})</span>}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {/* Personal Details */}
+        <div className="mb-6">
+          <h3 className="text-sm font-semibold border-b pb-1 mb-2">Personal Info</h3>
+          <p className="text-xs text-gray-700">
+            <span className="font-medium">Citizenship:</span> {personalDetails?.citizenship}
+          </p>
+          <p className="text-xs text-gray-700">
+            <span className="font-medium">Date of Birth:</span> {personalDetails?.dateOfBirth}
+          </p>
+          <p className="text-xs text-gray-700">
+            <span className="font-medium">Marital Status:</span> {personalDetails?.maritalStatus}
+          </p>
+        </div>
+
+        {/* Hobby */}
+        {hobby && (
+          <div>
+            <h3 className="text-sm font-semibold border-b pb-1 mb-2">Hobby</h3>
+            <p className="text-xs text-gray-700">{hobby}</p>
+          </div>
+        )}
+      </div>
+
+      {/* Main Content */}
+      <div className="col-span-2 pl-4 overflow-hidden">
+        {/* Summary */}
+        {summary && (
+          <div className="mb-4">
+            <h3 className="text-sm font-semibold border-b pb-1 mb-2">Summary</h3>
+            <p className="text-gray-700 text-xs">{summary}</p>
+          </div>
+        )}
+
+        {/* Key Achievement */}
+        <div className="mb-4 bg-gray-100 p-3 rounded">
+          <h3 className="text-sm font-semibold mb-2">Key Achievement</h3>
+          <p className="text-xs text-gray-700">
+            Implemented project management tools that led to savings of $7.73,890 within six months in 2020.
+          </p>
+        </div>
+
+        {/* Work Experience */}
+        {workExperience.length > 0 && (
+          <div className="mb-4">
+            <h3 className="text-sm font-semibold border-b pb-1 mb-2">Work History</h3>
+            {workExperience.map((job, idx) => (
+              <div key={idx} className="mb-3">
+                <p className="font-semibold text-xs">
+                  {job.role} – <span className="text-gray-600">{job.company}</span>
+                </p>
+                <p className="text-[10px] text-gray-500">
+                  {job.startDate} - {job.endDate}
+                </p>
+                <p className="text-xs text-gray-700 mt-1">{job.description}</p>
+              </div>
             ))}
-          </ul>
-        </section>
+          </div>
+        )}
+
+        {/* Education */}
+        {education.length > 0 && (
+          <div className="mb-4">
+            <h3 className="text-sm font-semibold border-b pb-1 mb-2">Education</h3>
+            {education.map((edu, idx) => (
+              <div key={idx} className="mb-2">
+                <p className="font-semibold text-xs">{edu.degree}</p>
+                <p className="text-xs text-gray-600">{edu.school}</p>
+                <p className="text-[10px] text-gray-500">
+                  {edu.startDate} - {edu.endDate}
+                </p>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Declaration */}
+        <div className="mt-6 pt-4 border-t text-xs text-gray-600">
+          <p><strong>Declaration:</strong> The information stated above is true at the level of my knowledge and belief.</p>
+        </div>
       </div>
     </div>
   );
-}
+};
+
+export default PrabhaDinResume;

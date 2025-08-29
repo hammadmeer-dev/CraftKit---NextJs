@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import {
   Home,
   FileText,
+  SquareMousePointer,
   Download,
   Settings,
   LogOut,
@@ -54,7 +55,7 @@ export default function EditorSidebar({ saveStatus }) {
             className="text-gray-600 hover:text-gray-900"
           >
             {isOpen ? (
-              <button
+              <span
               onClick={() => {
                 router.push("/Dashboard");
               }}
@@ -62,7 +63,7 @@ export default function EditorSidebar({ saveStatus }) {
             >
               <ArrowLeftFromLine className="w-5 h-5" />
               {isOpen && <span className="ml-3">Close Sidebar</span>}
-            </button>
+            </span>
             ) : (
               <ArrowRightFromLine className="w-5 h-5" />
             )}
@@ -115,7 +116,7 @@ export default function EditorSidebar({ saveStatus }) {
                   : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
               }`}
             >
-              <FileText className="w-5 h-5 flex-shrink-0" />
+              <SquareMousePointer className="w-5 h-5 flex-shrink-0" />
               {isOpen && <span className="ml-3">Select Template</span>}
             </button>
           </li>

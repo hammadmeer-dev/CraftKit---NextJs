@@ -7,7 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import EditorSidebar from "../components/EditorSidebar";
-import { templates as allTemplates } from "../Templates/TemplateRegistry"; // <-- registry import
+import { templates as allTemplates } from "../Templates/TemplateRegistry";
+import { dummyResume } from "./ResumeDummyData";
 
 const TemplateSelector = () => {
   const categories = ["All", "Professional", "Modern", "Creative", "Technical"];
@@ -82,22 +83,35 @@ const TemplateSelector = () => {
 
         {/* Template Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          {currentTemplates.map((template) => (
-            <Card
-              key={template.id}
-              className="cursor-pointer transition-all hover:shadow-md hover:border-gray-300"
-              onClick={() => goToEditor(template)}
-            >
-              <CardHeader>
-                <CardTitle className="text-lg">{template.name}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-gray-600">
-                  {template.description}
-                </p>
-              </CardContent>
-            </Card>
-          ))}
+          {currentTemplates.map((template) => {
+            const TemplateComponent = template.component;
+
+            return (
+              <Card
+                key={template.id}
+                className="cursor-pointer transition-all hover:shadow-md hover:border-gray-300 overflow-hidden"
+                onClick={() => goToEditor(template)}
+              >
+                <CardHeader>
+                  <CardTitle className="text-lg">{template.name}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-gray-600 mb-2">
+                    {template.description}
+                  </p>
+
+                  {/* ✅ Scaled Down Preview */}
+                  <div className="relative w-full h-64 border rounded-lg bg-white overflow-hidden flex items-center justify-center">
+                    <div className="transform scale-22 origin-top-center">
+                      <div className="w-[794px]">
+                        <TemplateComponent resumeData={dummyResume}/>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
         </div>
 
         {/* Pagination */}

@@ -57,13 +57,19 @@ export default function ResumeEditorPage() {
     <div className="min-h-screen bg-gray-50 flex">
       <EditorSidebar />
 
-      <div className="flex-1 flex flex-col md:flex-row">
-        <div className="w-full md:w-1/2 border-b md:border-b-0 md:border-r">
-          <EditContentSection resumeData={resumeData} setResumeData={setResumeData} onExportPDF={handleExportPDF}/>
+      <div className="flex-1 flex flex-col">
+        {/* Form Panel */}
+        <div className="w-full border-b">
+          <EditContentSection
+            resumeData={resumeData}
+            setResumeData={setResumeData}
+            onExportPDF={handleExportPDF}
+          />
         </div>
 
-        <div className="w-full md:w-1/2" >
-          <PreviewPanal resumeData={resumeData} ref={previewRef}/>
+        {/* Preview Panel */}
+        <div className="w-full flex-1">
+          <PreviewPanal ref={previewRef} resumeData={resumeData} />
         </div>
       </div>
     </div>

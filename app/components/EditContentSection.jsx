@@ -36,6 +36,11 @@ const EditContentSection = ({ resumeData, setResumeData, onExportPDF }) => {
     projects: false,
     certifications: false,
   });
+  useEffect(() => {
+  if (resumeData?.data?.selectedTemplate) {
+    setTemplate(resumeData.data.selectedTemplate);
+  }
+}, [resumeData, setTemplate]);
   const handleSaveResume = async () => {
     try {
       setSaveStatus("Saving...");
@@ -96,8 +101,12 @@ const EditContentSection = ({ resumeData, setResumeData, onExportPDF }) => {
           <Select
             value={template}
             onValueChange={(t) => {
-              setResumeData((prev) => ({ ...prev, templateId: t }));
-              setTemplate(t); // update global store
+              setResumeData((prev) => ({
+                ...prev,
+                data: { ...prev.data, selectedTemplate: t },
+              }));
+              setTemplate(t);
+              setSaveStatus("Unsaved changes");
             }}
           >
             <SelectTrigger className="w-48">

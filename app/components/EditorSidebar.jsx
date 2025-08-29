@@ -19,7 +19,7 @@ export default function EditorSidebar({ saveStatus }) {
   const pathname = usePathname();
   const currentView = pathname.startsWith("/Dashboard")
     ? "dashboard"
-    : pathname.startsWith("/editor")
+    : pathname.startsWith("/ResumeEditor")
     ? "editor"
     : pathname.startsWith("/Templates")
     ? "templates"

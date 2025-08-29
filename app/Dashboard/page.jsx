@@ -112,7 +112,7 @@ export default function Dashboard() {
             ))}
 
             {/* Add New Resume Card */}
-            <Card className="border-dashed border-2 border-gray-300 hover:border-gray-400 transition-colors cursor-pointer">
+            <Card className="border-dashed border-2 border-gray-300 hover:border-gray-400 transition-colors cursor-pointer" onClick={() => router.push("/ResumeEditor")}>
               <CardContent className="flex flex-col items-center justify-center h-48 text-gray-500">
                 <Plus className="w-12 h-12 mb-4" />
                 <p className="text-lg font-medium">Create New Resume</p>

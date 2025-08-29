@@ -8,7 +8,6 @@ import {
 } from "@/components/ui/select";
 import { PersonalInfoSection } from "../components/Form/PersonelInfoSection";
 import { SummarySection } from "../components/Form/SummarySection";
-import { ListSection } from "../components/Form/ListSection";
 import { SaveExportSection } from "../components/Form/SaveExportSection";
 import { loadResumes, generateId, saveResume } from "@/utils/resumeStorage";
 import { Input } from "@/components/ui/input";
@@ -16,11 +15,18 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChevronUp, ChevronDown } from "lucide-react";
 import { useTemplateStore } from "../Store/templateStore";
-const EditContentSection = ({ resumeData, setResumeData }) => {
+import { WorkExperienceSection } from "./Form/WorkExperianceSection";
+import { ProjectsSection } from "./Form/ProjectSection";
+import SkillsSection from "./Form/SkillSection";
+import { CertificationsSection } from "./Form/CertificationsSection";
+import { EducationSection } from "./Form/EducationSection";
+import { templates } from "../Templates/TemplateRegistry";
+
+const EditContentSection = ({ resumeData, setResumeData, onExportPDF }) => {
   const [currentResumeId, setCurrentResumeId] = useState(null);
   const [isExpanded, setIsExpanded] = useState(false);
   const [saveStatus, setSaveStatus] = useState("All changes saved");
-  const template = useTemplateStore((state) => state.selectedTemplate);
+  const { selectedTemplate: template, setTemplate } = useTemplateStore();
   const [expandedSections, setExpandedSections] = useState({
     personalInfo: true,
     summary: false,
@@ -30,20 +36,6 @@ const EditContentSection = ({ resumeData, setResumeData }) => {
     projects: false,
     certifications: false,
   });
-
-  useEffect(() => {
-    loadResumesFromDB();
-  }, []);
-
-  const loadResumesFromDB = async () => {
-    try {
-      const savedResumes = await loadResumes();
-      // Handle loaded resumes if needed
-    } catch (error) {
-      console.error("Error loading resumes:", error);
-    }
-  };
-
   const handleSaveResume = async () => {
     try {
       setSaveStatus("Saving...");
@@ -93,94 +85,6 @@ const EditContentSection = ({ resumeData, setResumeData }) => {
     setSaveStatus("Unsaved changes");
   };
 
-  const addEntry = (section) => {
-    const newEntry = { id: generateId(), ...defaultFields(section) };
-    setResumeData((prev) => ({
-      ...prev,
-      data: { ...prev.data, [section]: [...prev.data[section], newEntry] },
-    }));
-    setSaveStatus("Unsaved changes");
-  };
-const updateEntryField = (section, id, field, value) => {
-  setResumeData((prev) => ({
-    ...prev,
-    data: {
-      ...prev.data,
-      [section]: prev.data[section].map((item) =>
-        item.id === id ? { ...item, [field]: value } : item
-      ),
-    },
-  }));
-  setSaveStatus("Unsaved changes");
-};
-
-
-  const deleteEntry = (section, id) => {
-    setResumeData((prev) => ({
-      ...prev,
-      data: {
-        ...prev.data,
-        [section]: prev.data[section].filter((item) => item.id !== id),
-      },
-    }));
-    setSaveStatus("Unsaved changes");
-  };
-
-  const defaultFields = (section) => {
-    switch (section) {
-      case "workExperience":
-        return {
-          role: "",
-          company: "",
-          startDate: "",
-          endDate: "",
-          description: "",
-        };
-      case "education":
-        return {
-          degree: "",
-          school: "",
-          startDate: "",
-          endDate: "",
-          description: "",
-        };
-      case "skills":
-        return { name: "" };
-      case "projects":
-        return { name: "", description: "", link: "" };
-      case "certifications":
-        return { name: "", issuer: "", date: "" };
-      default:
-        return {};
-    }
-  };
-
-  const handleSubmitEntry = (section, id) => {
-    const entry = resumeData.data[section].find((item) => item.id === id);
-
-    // Validation
-     if (section === "education") {
-      if (!entry.degree?.trim() || !entry.school?.trim()) {
-        alert("Please fill in both degree and school fields");
-        return;
-      }
-    }
-
-    // Mark as submitted
-    setResumeData((prev) => ({
-      ...prev,
-      data: {
-        ...prev.data,
-        [section]: prev.data[section].map((item) =>
-          item.id === id ? { ...item, submitted: true } : item
-        ),
-      },
-    }));
-
-    setSaveStatus("Unsaved changes");
-    console.log(`${section.slice(0, -1)} entry submitted successfully`);
-  };
-
   return (
     <div className="bg-white border-r overflow-y-auto">
       <div className="p-6">
@@ -190,21 +94,21 @@ const updateEntryField = (section, id, field, value) => {
             {resumeData.title}
           </h1>
           <Select
-            value={resumeData.templateId}
-            onValueChange={(value) =>
-              setResumeData((prev) => ({ ...prev, templateId: value }))
-            }
+            value={template}
+            onValueChange={(t) => {
+              setResumeData((prev) => ({ ...prev, templateId: t }));
+              setTemplate(t); // update global store
+            }}
           >
             <SelectTrigger className="w-48">
-              <SelectValue placeholder="Template" />
+              <SelectValue placeholder={template} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="modern-minimalist">
-                {template?.name || "Modern Minimalist"}
-              </SelectItem>
-
-              <SelectItem value="classic">Classic</SelectItem>
-              <SelectItem value="creative">Creative</SelectItem>
+              {templates.map((t) => (
+                <SelectItem key={t.id} value={t.id}>
+                  {t.name}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
         </div>
@@ -212,11 +116,7 @@ const updateEntryField = (section, id, field, value) => {
           <CardHeader className="cursor-pointer" onClick={toggleTitleExpantion}>
             <div className="flex items-center justify-between">
               <CardTitle className="text-lg">Title</CardTitle>
-              {isExpanded ? (
-                <ChevronUp className="w-5 h-5" />
-              ) : (
-                <ChevronDown className="w-5 h-5" />
-              )}
+              {isExpanded ? <ChevronUp /> : <ChevronDown />}
             </div>
           </CardHeader>
           {isExpanded && (
@@ -246,33 +146,17 @@ const updateEntryField = (section, id, field, value) => {
           isExpanded={expandedSections.summary}
           toggleSection={() => toggleSection("summary")}
         />
+        <WorkExperienceSection initialItems={resumeData.data.workExperience} />
+        <EducationSection initialItems={resumeData.data.education} />
+        <SkillsSection initialItems={resumeData.data.skills} />
+        <ProjectsSection initialItems={resumeData.data.projects} />
+        <CertificationsSection initialItems={resumeData.data.certifications} />
 
-        {[
-          "workExperience",
-          "education",
-          "skills",
-          "projects",
-          "certifications",
-        ].map((section) => (
-          <ListSection
-            key={section}
-            title={section}
-            items={resumeData.data[section]}
-            defaultItem={defaultFields(section)}
-            onAdd={() => addEntry(section)}
-            onUpdate={(id, field, value) =>
-              updateEntryField(section, id, field, value)
-            }
-            onDelete={(id) => deleteEntry(section, id)}
-            onSubmit={(id) => {
-              handleSubmitEntry(section, id);
-            }}
-            isExpanded={expandedSections[section]}
-            toggleSection={() => toggleSection(section)}
-          />
-        ))}
-
-        <SaveExportSection onSave={handleSaveResume} saveStatus={saveStatus} />
+        <SaveExportSection
+          onSave={handleSaveResume}
+          saveStatus={saveStatus}
+          onExportPDF={onExportPDF}
+        />
       </div>
     </div>
   );

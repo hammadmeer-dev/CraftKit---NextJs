@@ -30,7 +30,7 @@ export default function EditorSidebar({ saveStatus }) {
       if (window.innerWidth < 768) {
         setIsOpen(false);
       } else {
-        setIsOpen(true);
+        setIsOpen(false);
       }
     };
     handleResize();
@@ -48,13 +48,21 @@ export default function EditorSidebar({ saveStatus }) {
       {isMobile ? (
         ""
       ) : (
-        <div className="p-4 border-b flex items-center justify-between">
+        <div className="p-4 border-b items-center justify-between hidden md:flex">
           <button
             onClick={() => setIsOpen(!isOpen)}
             className="text-gray-600 hover:text-gray-900"
           >
             {isOpen ? (
+              <button
+              onClick={() => {
+                router.push("/Dashboard");
+              }}
+              className={`flex items-center rounded-lg w-full text-left transition-colors `}
+            >
               <ArrowLeftFromLine className="w-5 h-5" />
+              {isOpen && <span className="ml-3">Close Sidebar</span>}
+            </button>
             ) : (
               <ArrowRightFromLine className="w-5 h-5" />
             )}

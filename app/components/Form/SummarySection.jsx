@@ -8,7 +8,7 @@ export const SummarySection = ({ summary, updateSummary, isExpanded, toggleSecti
       <CardHeader className="cursor-pointer" onClick={toggleSection}>
         <div className="flex items-center justify-between">
           <CardTitle className="text-lg">Summary</CardTitle>
-          {isExpanded ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+          {isExpanded ? <ChevronUp/> : <ChevronDown />}
         </div>
       </CardHeader>
       {isExpanded && (

@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useParams } from "next/navigation";
 import EditorSidebar from "../components/EditorSidebar";
 import PreviewPanal from "../components/PreviewPanal";
@@ -7,10 +7,16 @@ import EditContentSection from "../components/EditContentSection";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import { useTemplateStore } from "../Store/templateStore";
+import { useResumeStore } from "../Store/resumeStore";
+import { generateId } from "@/utils/resumeStorage";
+
 export default function ResumeEditor() {
   const previewRef = useRef();
+  const { id } = useParams(); // missing!
   const { selectedTemplate: template, setTemplate } = useTemplateStore();
-  const [resumeData, setResumeData] = useState({
+  const {resume,setResume} = useResumeStore();
+  const resumeData = {
+    id:generateId(),
     title: "Untitled Resume",
     templateId: { template },
     data: {
@@ -18,19 +24,29 @@ export default function ResumeEditor() {
         fullName: "",
         profession: "",
         location: "",
+        citizenship: "",
+        dateOfBirth: "",
+        maritalStatus: "",
         phone: "",
         email: "",
         portfolioWebsite: "",
-        profileImage: "", // 🆕 Added image field
+        profileImage: "",
       },
       summary: "",
+      hobby: "",
+      languages: [],
       workExperience: [],
       education: [],
       skills: [],
       projects: [],
       certifications: [],
+      achievements: [],
     },
-  });
+  };
+
+  useEffect(()=>{
+    console.log(useResumeStore.getState())
+  },[]);
   const handleExportPDF = async () => {
     const input = previewRef.current;
     const canvas = await html2canvas(input, { scale: 2 });
@@ -43,6 +59,11 @@ export default function ResumeEditor() {
     pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
     pdf.save(`${resumeData.title || "resume"}.pdf`);
   };
+  useEffect(() => {
+      if (!id) {
+        setResume(resumeData);
+      }
+    }, []);
 
   return (
     <div className="min-h-screen max-w-screen bg-gray-50 flex">
@@ -54,17 +75,18 @@ export default function ResumeEditor() {
         {/* Form Panel */}
         <div className="w-full border-b">
           <EditContentSection
-            resumeData={resumeData}
-            setResumeData={setResumeData}
             onExportPDF={handleExportPDF}
           />
         </div>
 
         {/* Preview Panel */}
         <div className="w-full flex-1">
-          <PreviewPanal ref={previewRef} resumeData={resumeData} />
+          <PreviewPanal ref={previewRef} resumeData={resume} />
         </div>
       </div>
     </div>
   );
 }
+
+
+

@@ -1,68 +1,62 @@
-import { useState, useEffect } from "react";
+"use client";
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ChevronUp, ChevronDown, Plus, Trash2, Check } from "lucide-react";
-import { generateId, loadResumes, saveResume } from "@/utils/resumeStorage";
+import { useResumeStore } from "../../Store/resumeStore";
+import { generateId } from "@/utils/resumeStorage";
 
-const SkillsSection = ({ initialItems = [] }) => {
-  const [items, setItems] = useState(initialItems);
+const SkillsSection = () => {
   const [isExpanded, setIsExpanded] = useState(false);
-  const [saveStatus, setSaveStatus] = useState("All changes saved");
 
-  // keep items synced with props
-  useEffect(() => {
-    setItems(initialItems);
-  }, [initialItems]);
+  // 🔹 Get skills from Zustand
+  const skills = useResumeStore((s) => s.resume.data.skills || []);
 
-  const toggleSection = () => setIsExpanded(!isExpanded);
+  // 🔹 Update skills list in Zustand
+  const updateSkills = (newItems) => {
+    useResumeStore.setState((state) => ({
+      resume: {
+        ...state.resume,
+        data: {
+          ...state.resume.data,
+          skills: newItems,
+        },
+      },
+    }));
+  };
 
+  // 🔹 CRUD
   const addEntry = () => {
-    setItems([
-      ...items,
+    updateSkills([
+      ...skills,
       { id: generateId(), name: "", rating: "", submitted: false },
     ]);
-    setSaveStatus("Unsaved changes");
   };
 
   const updateEntry = (id, field, value) => {
-    setItems(items.map((item) => (item.id === id ? { ...item, [field]: value } : item)));
-    setSaveStatus("Unsaved changes");
+    updateSkills(
+      skills.map((item) =>
+        item.id === id ? { ...item, [field]: value } : item
+      )
+    );
   };
 
   const deleteEntry = (id) => {
-    setItems(items.filter((item) => item.id !== id));
-    setSaveStatus("Unsaved changes");
+    updateSkills(skills.filter((item) => item.id !== id));
   };
 
   const submitEntry = (id) => {
-    setItems(items.map((item) => (item.id === id ? { ...item, submitted: true } : item)));
-    setSaveStatus("Unsaved changes");
-  };
-
-  const handleSave = async () => {
-    setSaveStatus("Saving...");
-    try {
-      const savedResumes = await loadResumes();
-      if (!savedResumes || savedResumes.length === 0) {
-        setSaveStatus("No resume found to save!");
-        return;
-      }
-      const updatedResume = {
-        ...savedResumes[0],
-        data: { ...savedResumes[0].data, skills: items },
-      };
-      await saveResume(updatedResume);
-      setSaveStatus("All changes saved");
-    } catch (err) {
-      console.error(err);
-      setSaveStatus("Error saving");
-    }
+    updateSkills(
+      skills.map((item) =>
+        item.id === id ? { ...item, submitted: true } : item
+      )
+    );
   };
 
   return (
     <Card className="mb-4">
-      <CardHeader onClick={toggleSection} className="cursor-pointer">
+      <CardHeader onClick={() => setIsExpanded((prev) => !prev)} className="cursor-pointer">
         <div className="flex justify-between items-center">
           <CardTitle className="text-lg">Skills</CardTitle>
           {isExpanded ? <ChevronUp /> : <ChevronDown />}
@@ -72,7 +66,7 @@ const SkillsSection = ({ initialItems = [] }) => {
       {isExpanded && (
         <CardContent>
           <div className="space-y-4">
-            {items.map((item) => (
+            {skills.map((item) => (
               <div
                 key={item.id}
                 className={`flex gap-2 items-center p-2 rounded-lg border transition-colors ${
@@ -134,11 +128,6 @@ const SkillsSection = ({ initialItems = [] }) => {
             <Button variant="outline" onClick={addEntry} className="w-full">
               <Plus className="w-4 h-4 mr-2" /> Add Skill
             </Button>
-
-            <Button onClick={handleSave} className="w-full mt-3">
-              Save Skills
-            </Button>
-            <p className="text-sm text-gray-500 mt-2">{saveStatus}</p>
           </div>
         </CardContent>
       )}

@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+"use client";
+import React, { useEffect, useState } from "react";
 import {
   Select,
   SelectContent,
@@ -6,50 +7,58 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { PersonalInfoSection } from "../components/Form/PersonelInfoSection";
-import { SummarySection } from "../components/Form/SummarySection";
-import { SaveExportSection } from "../components/Form/SaveExportSection";
-import { loadResumes, generateId, saveResume } from "@/utils/resumeStorage";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChevronUp, ChevronDown } from "lucide-react";
 import { useTemplateStore } from "../Store/templateStore";
-import { WorkExperienceSection } from "./Form/WorkExperianceSection";
-import { ProjectsSection } from "./Form/ProjectSection";
-import SkillsSection from "./Form/SkillSection";
-import { CertificationsSection } from "./Form/CertificationsSection";
-import { EducationSection } from "./Form/EducationSection";
+import { useResumeStore } from "../Store/resumeStore";
 import { templates } from "../Templates/TemplateRegistry";
+import { PersonalInfoSection } from "../components/Form/PersonelInfoSection";
+import { SummarySection } from "../components/Form/SummarySection";
+import { SaveExportSection } from "../components/Form/SaveExportSection";
+import { WorkExperienceSection } from "./Form/WorkExperianceSection";
+import { EducationSection } from "./Form/EducationSection";
+import SkillsSection from "./Form/SkillSection";
+import { ProjectsSection } from "./Form/ProjectSection";
+import { CertificationsSection } from "./Form/CertificationsSection";
+import { AchievementsSection } from "./Form/AchievementsSection";
+import { HobbySection } from "./Form/HobbySection";
+import { saveResume } from "@/utils/resumeStorage";
 
-const EditContentSection = ({ resumeData, setResumeData, onExportPDF }) => {
-  const [currentResumeId, setCurrentResumeId] = useState(null);
-  const [isExpanded, setIsExpanded] = useState(false);
-  const [saveStatus, setSaveStatus] = useState("All changes saved");
+const EditContentSection = ({ onExportPDF }) => {
+  const { resume,setResume } =
+    useResumeStore();
   const { selectedTemplate: template, setTemplate } = useTemplateStore();
-  const [expandedSections, setExpandedSections] = useState({
-    personalInfo: true,
-    summary: false,
-    workExperience: false,
-    education: false,
-    skills: false,
-    projects: false,
-    certifications: false,
-  });
+
+  const [saveStatus, setSaveStatus] = useState("All changes saved");
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  // 🔹 Sync template from resume store
   useEffect(() => {
-  if (resumeData?.data?.selectedTemplate) {
-    setTemplate(resumeData.data.selectedTemplate);
-  }
-}, [resumeData, setTemplate]);
+    if (resume.data?.selectedTemplate) {
+      setTemplate(resume.data.selectedTemplate);
+    }
+  }, [resume, setTemplate]);
+
+  const updateDataField = (field, value) => {
+  useResumeStore.setState((state) => ({
+    resume: {
+      ...state.resume,
+      [field]: value,
+      data: {
+        ...state.resume.data,
+      },
+    },
+  }));
+  setSaveStatus("Unsaved changes");
+};
+
+
   const handleSaveResume = async () => {
     try {
       setSaveStatus("Saving...");
-      const resumeToSave = {
-        id: currentResumeId || generateId(),
-        ...resumeData,
-      };
-      await saveResume(resumeToSave);
-      if (!currentResumeId) setCurrentResumeId(resumeToSave.id);
+      await saveResume(resume);
       setSaveStatus("All changes saved");
     } catch (error) {
       console.error("Error saving resume:", error);
@@ -57,54 +66,16 @@ const EditContentSection = ({ resumeData, setResumeData, onExportPDF }) => {
     }
   };
 
-  const toggleSection = (section) => {
-    setExpandedSections((prev) => ({ ...prev, [section]: !prev[section] }));
-  };
-  const toggleTitleExpantion = (section) => {
-    setIsExpanded(!isExpanded);
-  };
-
-  const updatePersonalInfo = (field, value) => {
-    setResumeData((prev) => ({
-      ...prev,
-      data: {
-        ...prev.data,
-        personalInfo: { ...prev.data.personalInfo, [field]: value },
-      },
-    }));
-    setSaveStatus("Unsaved changes");
-  };
-  const updateTitle = (value) => {
-    setResumeData((prev) => ({
-      ...prev,
-      title: value, // ✅ direct update at root
-    }));
-    setSaveStatus("Unsaved changes");
-  };
-
-  const updateResumeField = (field, value) => {
-    setResumeData((prev) => ({
-      ...prev,
-      data: { ...prev.data, [field]: value },
-    }));
-    setSaveStatus("Unsaved changes");
-  };
-
   return (
     <div className="bg-white border-r overflow-y-auto">
       <div className="p-6">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl font-bold text-gray-900">
-            {resumeData.title}
-          </h1>
+          <h1 className="text-2xl font-bold text-gray-900">{resume.title}</h1>
           <Select
             value={template}
             onValueChange={(t) => {
-              setResumeData((prev) => ({
-                ...prev,
-                data: { ...prev.data, selectedTemplate: t },
-              }));
+              updateDataField("templateId", t);
               setTemplate(t);
               setSaveStatus("Unsaved changes");
             }}
@@ -121,8 +92,13 @@ const EditContentSection = ({ resumeData, setResumeData, onExportPDF }) => {
             </SelectContent>
           </Select>
         </div>
+
+        {/* Title */}
         <Card className="mb-4">
-          <CardHeader className="cursor-pointer" onClick={toggleTitleExpantion}>
+          <CardHeader
+            className="cursor-pointer"
+            onClick={() => setIsExpanded(!isExpanded)}
+          >
             <div className="flex items-center justify-between">
               <CardTitle className="text-lg">Title</CardTitle>
               {isExpanded ? <ChevronUp /> : <ChevronDown />}
@@ -133,8 +109,8 @@ const EditContentSection = ({ resumeData, setResumeData, onExportPDF }) => {
               <Label htmlFor="resumeTitle">Title</Label>
               <Input
                 id="resumeTitle"
-                value={resumeData.title || ""}
-                onChange={(e) => updateTitle(e.target.value)}
+                value={resume.title || ""}
+                onChange={(e) => setResume({ ...resume, title: e.target.value })}
                 placeholder="Enter resume title"
               />
             </CardContent>
@@ -142,24 +118,15 @@ const EditContentSection = ({ resumeData, setResumeData, onExportPDF }) => {
         </Card>
 
         {/* Sections */}
-        <PersonalInfoSection
-          personalInfo={resumeData.data.personalInfo}
-          updatePersonalInfo={updatePersonalInfo}
-          isExpanded={expandedSections.personalInfo}
-          toggleSection={() => toggleSection("personalInfo")}
-        />
-
-        <SummarySection
-          summary={resumeData.data.summary}
-          updateSummary={(value) => updateResumeField("summary", value)}
-          isExpanded={expandedSections.summary}
-          toggleSection={() => toggleSection("summary")}
-        />
-        <WorkExperienceSection initialItems={resumeData.data.workExperience} />
-        <EducationSection initialItems={resumeData.data.education} />
-        <SkillsSection initialItems={resumeData.data.skills} />
-        <ProjectsSection initialItems={resumeData.data.projects} />
-        <CertificationsSection initialItems={resumeData.data.certifications} />
+        <PersonalInfoSection />
+        <SummarySection />
+        <HobbySection />
+        <WorkExperienceSection />
+        <EducationSection />
+        <SkillsSection />
+        <ProjectsSection />
+        <CertificationsSection />
+        <AchievementsSection />
 
         <SaveExportSection
           onSave={handleSaveResume}

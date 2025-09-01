@@ -1,25 +1,37 @@
-import { useState, useEffect } from "react";
+"use client";
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ChevronUp, ChevronDown, Plus, Trash2, Check } from "lucide-react";
-import { generateId, loadResumes, saveResume } from "@/utils/resumeStorage";
+import { useResumeStore } from "../../Store/resumeStore";
+import { generateId } from "@/utils/resumeStorage";
 
-export const CertificationsSection = ({ initialItems = [] }) => {
-  const [items, setItems] = useState(initialItems);
+export const CertificationsSection = () => {
   const [isExpanded, setIsExpanded] = useState(false);
-  const [saveStatus, setSaveStatus] = useState("All changes saved");
 
-  // keep synced with parent data
-  useEffect(() => {
-    setItems(initialItems);
-  }, [initialItems]);
+  // 🔹 get certifications from store
+  const certifications = useResumeStore(
+    (s) => s.resume.data.certifications || []
+  );
 
-  const toggleSection = () => setIsExpanded(!isExpanded);
+  // 🔹 updater
+  const updateCertifications = (newItems) => {
+    useResumeStore.setState((state) => ({
+      resume: {
+        ...state.resume,
+        data: {
+          ...state.resume.data,
+          certifications: newItems,
+        },
+      },
+    }));
+  };
 
+  // 🔹 actions
   const addEntry = () => {
-    setItems([
-      ...items,
+    updateCertifications([
+      ...certifications,
       {
         id: generateId(),
         name: "",
@@ -28,57 +40,34 @@ export const CertificationsSection = ({ initialItems = [] }) => {
         submitted: false,
       },
     ]);
-    setSaveStatus("Unsaved changes");
   };
 
   const updateEntry = (id, field, value) => {
-    setItems(
-      items.map((item) =>
+    updateCertifications(
+      certifications.map((item) =>
         item.id === id ? { ...item, [field]: value } : item
       )
     );
-    setSaveStatus("Unsaved changes");
   };
 
   const deleteEntry = (id) => {
-    setItems(items.filter((item) => item.id !== id));
-    setSaveStatus("Unsaved changes");
+    updateCertifications(certifications.filter((item) => item.id !== id));
   };
 
   const submitEntry = (id) => {
-    setItems(
-      items.map((item) =>
+    updateCertifications(
+      certifications.map((item) =>
         item.id === id ? { ...item, submitted: true } : item
       )
     );
-    setSaveStatus("Unsaved changes");
-  };
-
-  const handleSave = async () => {
-    setSaveStatus("Saving...");
-    try {
-      const savedResumes = await loadResumes();
-      if (!savedResumes || savedResumes.length === 0) {
-        setSaveStatus("No resume found to save!");
-        return;
-      }
-
-      const updatedResume = {
-        ...savedResumes[0],
-        data: { ...savedResumes[0].data, certifications: items },
-      };
-
-      await saveResume(updatedResume);
-      setSaveStatus("All changes saved");
-    } catch (err) {
-      console.error(err);
-      setSaveStatus("Error saving");
-    }
   };
 
   return (
     <Card className="mb-4">
-      <CardHeader onClick={toggleSection} className="cursor-pointer">
+      <CardHeader
+        onClick={() => setIsExpanded((prev) => !prev)}
+        className="cursor-pointer"
+      >
         <div className="flex justify-between items-center">
           <CardTitle className="text-lg">Certifications</CardTitle>
           {isExpanded ? <ChevronUp /> : <ChevronDown />}
@@ -87,34 +76,29 @@ export const CertificationsSection = ({ initialItems = [] }) => {
 
       {isExpanded && (
         <CardContent className="space-y-4">
-          {items.map((item) => (
+          {certifications.map((item) => (
             <div
               key={item.id}
               className={`p-4 border rounded-lg space-y-2 transition-colors ${
-                item.submitted
-                  ? "bg-green-50 border-green-200"
-                  : "bg-white"
+                item.submitted ? "bg-green-50 border-green-200" : "bg-white"
               }`}
             >
               <Input
                 placeholder="Certification Name"
-                value={item.name ?? ""}
+                value={item.name}
                 onChange={(e) => updateEntry(item.id, "name", e.target.value)}
-                disabled={item.submitted}
               />
               <Input
                 placeholder="Issuing Organization"
-                value={item.organization ?? ""}
+                value={item.organization}
                 onChange={(e) =>
                   updateEntry(item.id, "organization", e.target.value)
                 }
-                disabled={item.submitted}
               />
               <Input
                 placeholder="Year / Date"
-                value={item.year ?? ""}
+                value={item.year}
                 onChange={(e) => updateEntry(item.id, "year", e.target.value)}
-                disabled={item.submitted}
               />
 
               <div className="flex gap-2">
@@ -122,38 +106,29 @@ export const CertificationsSection = ({ initialItems = [] }) => {
                   size="sm"
                   onClick={() => submitEntry(item.id)}
                   disabled={item.submitted}
-                  className="flex-1 gap-2"
                 >
                   {item.submitted ? (
                     <>
-                      <Check className="w-4 h-4" /> Added
+                      <Check className="w-4 h-4 mr-2" /> Added
                     </>
                   ) : (
                     "Submit"
                   )}
                 </Button>
-
                 <Button
-                  variant="destructive"
                   size="sm"
+                  variant="destructive"
                   onClick={() => deleteEntry(item.id)}
-                  className="flex-1 gap-2"
                 >
-                  <Trash2 className="w-4 h-4" /> Delete
+                  <Trash2 className="w-4 h-4 mr-2" /> Delete
                 </Button>
               </div>
             </div>
           ))}
 
-          <Button onClick={addEntry} variant="outline" className="w-full">
+          <Button variant="outline" onClick={addEntry} className="w-full">
             <Plus className="w-4 h-4 mr-2" /> Add Certification
           </Button>
-
-          <Button onClick={handleSave} className="w-full mt-3">
-            Save Certifications
-          </Button>
-
-          <p className="text-sm text-gray-500 mt-2">{saveStatus}</p>
         </CardContent>
       )}
     </Card>

@@ -4,108 +4,97 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ChevronUp, ChevronDown, Plus, Trash2, Check } from "lucide-react";
-import { useResumeStore } from "../../Store/resumeStore";
-import { generateId } from "@/utils/resumeStorage";
+import { generateId, loadResumes, saveResume } from "@/utils/resumeStorage";
 
-export const ProjectsSection = () => {
+export const AchievementsSection = () => {
+  const [items, setItems] = useState([]);
   const [isExpanded, setIsExpanded] = useState(false);
+  const [saveStatus, setSaveStatus] = useState("All changes saved");
 
-  // 🔹 get projects from store
-  const projects = useResumeStore((s) => s.resume.data.projects || []);
+  const toggleSection = () => setIsExpanded(!isExpanded);
 
-  // 🔹 updater
-  const updateProjects = (newItems) => {
-    useResumeStore.setState((state) => ({
-      resume: {
-        ...state.resume,
-        data: {
-          ...state.resume.data,
-          projects: newItems,
-        },
-      },
-    }));
-  };
-
-  // 🔹 CRUD methods (inside component)
-  const addProject = () => {
-    updateProjects([
-      ...projects,
+  const addEntry = () => {
+    setItems([
+      ...items,
       {
         id: generateId(),
-        name: "",
+        title: "",
         description: "",
-        link: "",
+        year: "",
         submitted: false,
       },
     ]);
+    setSaveStatus("Unsaved changes");
   };
 
-  const updateProject = (id, field, value) => {
-    updateProjects(
-      projects.map((item) =>
+  const updateEntry = (id, field, value) => {
+    setItems(
+      items.map((item) =>
         item.id === id ? { ...item, [field]: value } : item
       )
     );
+    setSaveStatus("Unsaved changes");
   };
 
-  const deleteProject = (id) => {
-    updateProjects(projects.filter((item) => item.id !== id));
+  const deleteEntry = (id) => {
+    setItems(items.filter((item) => item.id !== id));
+    setSaveStatus("Unsaved changes");
   };
 
-  const submitProject = (id) => {
-    updateProjects(
-      projects.map((item) =>
+  const submitEntry = (id) => {
+    setItems(
+      items.map((item) =>
         item.id === id ? { ...item, submitted: true } : item
       )
     );
+    setSaveStatus("Unsaved changes");
   };
 
   return (
     <Card className="mb-4">
-      <CardHeader
-        onClick={() => setIsExpanded((prev) => !prev)}
-        className="cursor-pointer"
-      >
+      <CardHeader onClick={toggleSection} className="cursor-pointer">
         <div className="flex justify-between items-center">
-          <CardTitle className="text-lg">Projects</CardTitle>
+          <CardTitle className="text-lg">Achievements</CardTitle>
           {isExpanded ? <ChevronUp /> : <ChevronDown />}
         </div>
       </CardHeader>
 
       {isExpanded && (
         <CardContent className="space-y-4">
-          {projects.map((item) => (
+          {items.map((item) => (
             <div
               key={item.id}
               className={`p-4 border rounded-lg space-y-2 transition-colors ${
-                item.submitted ? "bg-green-50 border-green-200" : "bg-white"
+                item.submitted
+                  ? "bg-green-50 border-green-200"
+                  : "bg-white"
               }`}
             >
               <Input
-                placeholder="Project Name"
-                value={item.name}
-                onChange={(e) => updateProject(item.id, "name", e.target.value)}
+                placeholder="Achievement Title"
+                value={item.title ?? ""}
+                onChange={(e) => updateEntry(item.id, "title", e.target.value)}
                 disabled={item.submitted}
               />
               <Input
                 placeholder="Description"
-                value={item.description}
+                value={item.description ?? ""}
                 onChange={(e) =>
-                  updateProject(item.id, "description", e.target.value)
+                  updateEntry(item.id, "description", e.target.value)
                 }
                 disabled={item.submitted}
               />
               <Input
-                placeholder="Link (optional)"
-                value={item.link}
-                onChange={(e) => updateProject(item.id, "link", e.target.value)}
+                placeholder="Year / Date"
+                value={item.year ?? ""}
+                onChange={(e) => updateEntry(item.id, "year", e.target.value)}
                 disabled={item.submitted}
               />
 
               <div className="flex gap-2">
                 <Button
                   size="sm"
-                  onClick={() => submitProject(item.id)}
+                  onClick={() => submitEntry(item.id)}
                   disabled={item.submitted}
                 >
                   {item.submitted ? (
@@ -119,7 +108,7 @@ export const ProjectsSection = () => {
                 <Button
                   size="sm"
                   variant="destructive"
-                  onClick={() => deleteProject(item.id)}
+                  onClick={() => deleteEntry(item.id)}
                 >
                   <Trash2 className="w-4 h-4 mr-2" /> Delete
                 </Button>
@@ -127,9 +116,11 @@ export const ProjectsSection = () => {
             </div>
           ))}
 
-          <Button variant="outline" onClick={addProject} className="w-full">
-            <Plus className="w-4 h-4 mr-2" /> Add Project
+          <Button onClick={addEntry} variant="outline" className="w-full">
+            <Plus className="w-4 h-4 mr-2" /> Add Achievement
           </Button>
+
+          <p className="text-sm text-gray-500 mt-2">{saveStatus}</p>
         </CardContent>
       )}
     </Card>

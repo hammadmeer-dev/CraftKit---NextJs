@@ -5,21 +5,20 @@ import { Textarea } from "@/components/ui/textarea";
 import { ChevronUp, ChevronDown } from "lucide-react";
 import { useResumeStore } from "../../Store/resumeStore";
 
-export const SummarySection = () => {
+export const HobbySection = () => {
   const [isExpanded, setIsExpanded] = useState(true); // 🔹 local expand/collapse state
 
-  // 🔹 Get summary from the store
-  const summary = useResumeStore((s) => s.resume.data.summary);
-  const setSummary = useResumeStore((s) => s.setResume); // OR add a dedicated updater
+  // 🔹 Get hobby from the store
+  const hobby = useResumeStore((s) => s.resume.data.hobby);
 
-  // Better: create a small wrapper updater
-  const updateSummary = (value) => {
+  // 🔹 updater for hobby
+  const updateHobby = (value) => {
     useResumeStore.setState((state) => ({
       resume: {
         ...state.resume,
         data: {
           ...state.resume.data,
-          summary: value,
+          hobby: value,
         },
       },
     }));
@@ -32,7 +31,7 @@ export const SummarySection = () => {
         onClick={() => setIsExpanded((prev) => !prev)}
       >
         <div className="flex items-center justify-between">
-          <CardTitle className="text-lg">Summary</CardTitle>
+          <CardTitle className="text-lg">Hobby</CardTitle>
           {isExpanded ? <ChevronUp /> : <ChevronDown />}
         </div>
       </CardHeader>
@@ -40,9 +39,9 @@ export const SummarySection = () => {
       {isExpanded && (
         <CardContent>
           <Textarea
-            value={summary}
-            onChange={(e) => updateSummary(e.target.value)}
-            placeholder="Write your professional summary here..."
+            value={hobby}
+            onChange={(e) => updateHobby(e.target.value)}
+            placeholder="Write about your hobbies or interests..."
             rows={4}
           />
         </CardContent>

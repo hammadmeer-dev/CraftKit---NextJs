@@ -8,7 +8,7 @@ const PreviewPanal = forwardRef(({ resumeData }, ref) => {
   const TemplateComponent = template.component;
 
   // Default background (child can override with style or prop)
-  const backgroundColor = resumeData.data.personalInfo?.bgColor || "bg-white";
+  const backgroundColor = resumeData?.data?.personalInfo?.bgColor || "bg-white";
 
   return (
     <div className="flex justify-center p-4 bg-gray-100 overflow-auto">

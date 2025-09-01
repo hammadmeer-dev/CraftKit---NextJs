@@ -7,34 +7,14 @@ import EditContentSection from "../../components/EditContentSection";
 import { loadResumeById } from "@/utils/resumeStorage";
 import html2canvas from "html2canvas-pro";
 import jsPDF from "jspdf";
+import { useResumeStore } from "@/app/Store/resumeStore";
 export default function ResumeEditorPage() {
   const { id } = useParams();
   const previewRef = useRef();
-  const [resumeData, setResumeData] = useState({
-    title: 'Untitled Resume',
-    templateId: 'modern-minimalist',
-    data: {
-      personalInfo: {
-        fullName: '',
-        profession: '',
-        location: '',
-        phone: '',
-        email: '',
-        portfolioWebsite: '',
-        profileImage: '' // 🆕 Added image field
-      },
-      summary: '',
-      workExperience: [],
-      education: [],
-      skills: [],
-      projects: [],
-      certifications: []
-    }
-  });
-
+  const {setResume, resume} = useResumeStore()
   const handleExportPDF = async () => {
     const input = previewRef.current;
-    const canvas = await html2canvas(input, { scale: 2 });
+    const canvas = await html2canvas(input, { scale: 3 });
     const imgData = canvas.toDataURL("image/png");
 
     const pdf = new jsPDF("p", "mm", "a4");
@@ -42,16 +22,16 @@ export default function ResumeEditorPage() {
     const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
 
     pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
-    pdf.save(`${resumeData.title || "resume"}.pdf`);
+    pdf.save(`${resume.title || "resume"}.pdf`);
   };
   useEffect(() => {
     if (id) {
-      loadResumeById(id).then((data) => {setResumeData(data);console.log(data);});
+      loadResumeById(id).then((resume) => {console.log(resume); setResume(resume);});
       
     }
   }, [id]);
 
-  if (!resumeData) return <p className="p-6">Loading resume...</p>;
+  if (!resume) return <p className="p-6">Loading resume...</p>;
 
   return (
     <div className="min-h-screen bg-gray-50 flex">
@@ -61,15 +41,13 @@ export default function ResumeEditorPage() {
         {/* Form Panel */}
         <div className="w-full border-b">
           <EditContentSection
-            resumeData={resumeData}
-            setResumeData={setResumeData}
             onExportPDF={handleExportPDF}
           />
         </div>
 
         {/* Preview Panel */}
         <div className="w-full flex-1">
-          <PreviewPanal ref={previewRef} resumeData={resumeData} />
+          <PreviewPanal ref={previewRef} resumeData={resume} />
         </div>
       </div>
     </div>

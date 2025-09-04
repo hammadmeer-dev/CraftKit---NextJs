@@ -11,7 +11,7 @@ const PreviewPanal = forwardRef(({ resumeData }, ref) => {
   const backgroundColor = resumeData?.data?.personalInfo?.bgColor || "bg-white";
 
   return (
-    <div className="flex justify-center p-4 bg-gray-100 overflow-auto">
+    <div className="flex justify-center p-4 bg-gray-100 overflow-auto ">
       {/* A4 Container with responsive scaling */}
       <div
         ref={ref}

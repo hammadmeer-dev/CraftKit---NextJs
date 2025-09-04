@@ -136,7 +136,7 @@ const PrabhaDinResume = ({ resumeData }) => {
         )}
 
         {/* Achievements */}
-        {achievements.length > 0 && (
+        {achievements?.length > 0 && (
           <div className="mb-4">
             <h3 className="text-sm font-semibold mb-2">Key Achievements</h3>
             {achievements.map((ach, index) => (

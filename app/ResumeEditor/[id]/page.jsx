@@ -1,18 +1,18 @@
 "use client";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState,useRef } from "react";
 import { useParams } from "next/navigation";
 import EditorSidebar from "../../components/EditorSidebar";
 import PreviewPanal from "../../components/PreviewPanal";
 import EditContentSection from "../../components/EditContentSection";
 import { loadResumeById } from "@/utils/resumeStorage";
-import html2canvas from "html2canvas-pro";
-import jsPDF from "jspdf";
 import { useResumeStore } from "@/app/Store/resumeStore";
 export default function ResumeEditorPage() {
   const { id } = useParams();
   const previewRef = useRef();
-  const { setResume, resume } = useResumeStore();
+  const {setResume, resume} = useResumeStore()
   const handleExportPDF = async () => {
+
+
     if (!previewRef.current) return;
 
     // Grab actual HTML from preview
@@ -41,10 +41,8 @@ export default function ResumeEditorPage() {
   };
   useEffect(() => {
     if (id) {
-      loadResumeById(id).then((resume) => {
-        console.log(resume);
-        setResume(resume);
-      });
+      loadResumeById(id).then((resume) => {console.log(resume); setResume(resume);});
+      
     }
   }, [id]);
 
@@ -57,7 +55,9 @@ export default function ResumeEditorPage() {
       <div className="flex-1 flex flex-col">
         {/* Form Panel */}
         <div className="w-full border-b">
-          <EditContentSection onExportPDF={handleExportPDF} />
+          <EditContentSection
+            onExportPDF={handleExportPDF}
+          />
         </div>
 
         {/* Preview Panel */}

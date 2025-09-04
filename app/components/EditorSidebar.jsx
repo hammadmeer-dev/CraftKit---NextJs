@@ -56,14 +56,14 @@ export default function EditorSidebar({ saveStatus }) {
           >
             {isOpen ? (
               <span
-              onClick={() => {
-                router.push("/Dashboard");
-              }}
-              className={`flex items-center rounded-lg w-full text-left transition-colors `}
-            >
-              <ArrowLeftFromLine className="w-5 h-5" />
-              {isOpen && <span className="ml-3">Close Sidebar</span>}
-            </span>
+                onClick={() => {
+                  router.push("/Dashboard");
+                }}
+                className={`flex items-center rounded-lg w-full text-left transition-colors `}
+              >
+                <ArrowLeftFromLine className="w-5 h-5" />
+                {isOpen && <span className="ml-3">Close Sidebar</span>}
+              </span>
             ) : (
               <ArrowRightFromLine className="w-5 h-5" />
             )}
@@ -121,22 +121,19 @@ export default function EditorSidebar({ saveStatus }) {
             </button>
           </li>
           <li>
-            <a
-              href="#"
-              className="flex items-center px-3 py-2 rounded-lg text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-            >
-              <Download className="w-5 h-5 flex-shrink-0" />
-              {isOpen && <span className="ml-3">PDF Export</span>}
-            </a>
-          </li>
-          <li>
-            <a
-              href="#"
-              className="flex items-center px-3 py-2 rounded-lg text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+            <button
+              onClick={() => {
+                router.push("/Settings");
+              }}
+              className={`flex items-center px-3 py-2 rounded-lg w-full text-left transition-colors ${
+                currentView === "settings"
+                  ? "bg-blue-50 text-blue-700 font-medium"
+                  : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+              }`}
             >
               <Settings className="w-5 h-5 flex-shrink-0" />
               {isOpen && <span className="ml-3">Settings</span>}
-            </a>
+            </button>
           </li>
         </ul>
       </nav>
@@ -146,7 +143,6 @@ export default function EditorSidebar({ saveStatus }) {
         {currentView === "editor" && isOpen && (
           <p className="text-xs text-gray-500 mb-2">{saveStatus}</p>
         )}
-
       </div>
     </div>
   );

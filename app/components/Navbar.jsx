@@ -21,13 +21,6 @@ function Navbar() {
         </nav>
         <div className="flex items-center gap-3">
           <Button
-            variant="outline"
-            className="px-4 py-1"
-            onClick={() => router.push("/AboutPage")}
-          >
-            Tools
-          </Button>
-          <Button
             className="bg-primary text-black px-4 py-1 hover:bg-primary/90"
             onClick={() => router.push("/Dashboard")}
           >

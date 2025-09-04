@@ -1,26 +1,16 @@
 // app/api/export-pdf/route.js
-import chromium from "@sparticuz/chromium";
-import puppeteer from "puppeteer-core";
+import puppeteer from "puppeteer";
 
 export async function POST(req) {
   try {
     const { html } = await req.json();
 
     const browser = await puppeteer.launch({
-      args: chromium.args,
-      defaultViewport: chromium.defaultViewport,
-      executablePath:
-        process.env.NODE_ENV === "production"
-          ? await chromium.executablePath()
-          : process.platform === "win32"
-          ? "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe" // Windows local Chrome
-          : "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome", // Mac local Chrome
-      headless: true,
+      headless: true, // uses the bundled Chromium that Puppeteer downloads
     });
 
     const page = await browser.newPage();
 
-    // ⚡ Inject Tailwind via CDN for now (simpler than loading _next CSS)
     const fullHtml = `
       <!DOCTYPE html>
       <html lang="en">
@@ -44,7 +34,6 @@ export async function POST(req) {
     await browser.close();
 
     return new Response(pdfBuffer, {
-      status: 200,
       headers: {
         "Content-Type": "application/pdf",
         "Content-Disposition": 'attachment; filename="resume.pdf"',
@@ -52,8 +41,6 @@ export async function POST(req) {
     });
   } catch (err) {
     console.error("❌ PDF generation error:", err);
-    return new Response(JSON.stringify({ error: err.message }), {
-      status: 500,
-    });
+    return new Response(JSON.stringify({ error: err.message }), { status: 500 });
   }
 }

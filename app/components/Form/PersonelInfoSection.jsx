@@ -17,7 +17,9 @@ export const PersonalInfoSection = () => {
   const email = useResumeStore((s) => s.resume.data.personalInfo.email);
   const portfolioWebsite = useResumeStore((s) => s.resume.data.personalInfo.portfolioWebsite);
   const profileImage = useResumeStore((s) => s.resume.data.personalInfo.profileImage);
-
+  const citizenship = useResumeStore((s) => s.resume.data.personalInfo.citizenship);
+  const dateOfBirth = useResumeStore((s) => s.resume.data.personalInfo.dateOfBirth);
+  const maritalStatus = useResumeStore((s) => s.resume.data.personalInfo.maritalStatus);
   const updatePersonalInfo = useResumeStore((s) => s.updatePersonalInfo);
 
   return (
@@ -49,10 +51,32 @@ export const PersonalInfoSection = () => {
             />
           </div>
           <div>
+            <Label className="pb-2">Citizenship</Label>
+            <Input
+              value={citizenship}
+              onChange={(e) => updatePersonalInfo("citizenship", e.target.value)}
+            />
+          </div>
+          <div>
+            <Label className="pb-2">Date of Birth</Label>
+            <Input
+              type="date"
+              value={dateOfBirth}
+              onChange={(e) => updatePersonalInfo("dateOfBirth", e.target.value)}
+            />
+          </div>
+          <div>
             <Label className="pb-2">Location</Label>
             <Input
               value={location}
               onChange={(e) => updatePersonalInfo("location", e.target.value)}
+            />
+          </div>
+          <div>
+            <Label className="pb-2">Marital Status</Label>
+            <Input
+              value={maritalStatus}
+              onChange={(e) => updatePersonalInfo("maritalStatus", e.target.value)}
             />
           </div>
           <div>

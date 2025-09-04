@@ -6,6 +6,7 @@ export const useResumeStore = create((set) => ({
     id: "",
     title: "Untitled Resume",
     templateId: "",
+    created:"",
     data: {
       personalInfo: {
         fullName: "",

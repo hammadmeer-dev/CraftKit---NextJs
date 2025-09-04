@@ -44,6 +44,7 @@ export default function Dashboard() {
 
   const handleDelete = (id) => {
     deleteResumeFromDB(id)
+
   };
 
   const handleExport = () => {
@@ -70,7 +71,7 @@ export default function Dashboard() {
                         {resume.title}
                       </CardTitle>
                       <p className="text-sm text-gray-500">
-                        Updated: {resume.lastUpdated}
+                        Created: {new Date(resume.created).toLocaleString()}
                       </p>
                     </div>
                     <Badge 

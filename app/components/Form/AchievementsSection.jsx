@@ -5,8 +5,10 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ChevronUp, ChevronDown, Plus, Trash2, Check } from "lucide-react";
 import { generateId, loadResumes, saveResume } from "@/utils/resumeStorage";
+import { useResumeStore } from "@/app/Store/resumeStore";
 
 export const AchievementsSection = () => {
+    const achivements = useResumeStore((s) => s.resume.data.achievements || []);
   const [items, setItems] = useState([]);
   const [isExpanded, setIsExpanded] = useState(false);
   const [saveStatus, setSaveStatus] = useState("All changes saved");
@@ -41,14 +43,21 @@ export const AchievementsSection = () => {
     setSaveStatus("Unsaved changes");
   };
 
-  const submitEntry = (id) => {
-    setItems(
-      items.map((item) =>
-        item.id === id ? { ...item, submitted: true } : item
-      )
-    );
-    setSaveStatus("Unsaved changes");
-  };
+const submitEntry = (id) => {
+  useResumeStore.setState((state) => ({
+    resume: {
+      ...state.resume,
+      data: {
+        ...state.resume.data,
+        achievements: state.resume.data.achievements.map((item) =>
+          item.id === id ? { ...item, submitted: true } : item
+        ),
+      },
+    },
+  }));
+  setSaveStatus("Saved changes");
+};
+
 
   return (
     <Card className="mb-4">

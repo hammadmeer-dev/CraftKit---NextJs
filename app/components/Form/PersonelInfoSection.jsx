@@ -11,21 +11,33 @@ export const PersonalInfoSection = () => {
 
   // 🔹 Access fields one by one
   const fullName = useResumeStore((s) => s.resume.data.personalInfo.fullName);
-  const profession = useResumeStore((s) => s.resume.data.personalInfo.profession);
+  const profession = useResumeStore(
+    (s) => s.resume.data.personalInfo.profession
+  );
   const location = useResumeStore((s) => s.resume.data.personalInfo.location);
   const phone = useResumeStore((s) => s.resume.data.personalInfo.phone);
   const email = useResumeStore((s) => s.resume.data.personalInfo.email);
-  const portfolioWebsite = useResumeStore((s) => s.resume.data.personalInfo.portfolioWebsite);
-  const profileImage = useResumeStore((s) => s.resume.data.personalInfo.profileImage);
-  const citizenship = useResumeStore((s) => s.resume.data.personalInfo.citizenship);
-  const dateOfBirth = useResumeStore((s) => s.resume.data.personalInfo.dateOfBirth);
-  const maritalStatus = useResumeStore((s) => s.resume.data.personalInfo.maritalStatus);
+  const portfolioWebsite = useResumeStore(
+    (s) => s.resume.data.personalInfo.portfolioWebsite
+  );
+  const profileImage = useResumeStore(
+    (s) => s.resume.data.personalInfo.profileImage
+  );
+  const citizenship = useResumeStore(
+    (s) => s.resume.data.personalInfo.citizenship
+  );
+  const dateOfBirth = useResumeStore(
+    (s) => s.resume.data.personalInfo.dateOfBirth
+  );
+  const maritalStatus = useResumeStore(
+    (s) => s.resume.data.personalInfo.maritalStatus
+  );
   const updatePersonalInfo = useResumeStore((s) => s.updatePersonalInfo);
 
   return (
     <Card className="mb-4">
-      <CardHeader 
-        className="cursor-pointer" 
+      <CardHeader
+        className="cursor-pointer"
         onClick={() => setIsExpanded((prev) => !prev)} // 🔹 toggle on click
       >
         <div className="flex items-center justify-between">
@@ -54,7 +66,9 @@ export const PersonalInfoSection = () => {
             <Label className="pb-2">Citizenship</Label>
             <Input
               value={citizenship}
-              onChange={(e) => updatePersonalInfo("citizenship", e.target.value)}
+              onChange={(e) =>
+                updatePersonalInfo("citizenship", e.target.value)
+              }
             />
           </div>
           <div>
@@ -62,7 +76,9 @@ export const PersonalInfoSection = () => {
             <Input
               type="date"
               value={dateOfBirth}
-              onChange={(e) => updatePersonalInfo("dateOfBirth", e.target.value)}
+              onChange={(e) =>
+                updatePersonalInfo("dateOfBirth", e.target.value)
+              }
             />
           </div>
           <div>
@@ -76,7 +92,9 @@ export const PersonalInfoSection = () => {
             <Label className="pb-2">Marital Status</Label>
             <Input
               value={maritalStatus}
-              onChange={(e) => updatePersonalInfo("maritalStatus", e.target.value)}
+              onChange={(e) =>
+                updatePersonalInfo("maritalStatus", e.target.value)
+              }
             />
           </div>
           <div>
@@ -97,15 +115,35 @@ export const PersonalInfoSection = () => {
             <Label className="pb-2">Portfolio Website</Label>
             <Input
               value={portfolioWebsite}
-              onChange={(e) => updatePersonalInfo("portfolioWebsite", e.target.value)}
+              onChange={(e) =>
+                updatePersonalInfo("portfolioWebsite", e.target.value)
+              }
             />
           </div>
           <div>
-            <Label className="pb-2">Profile Image URL</Label>
+            <Label className="pb-2">Profile Image</Label>
             <Input
-              value={profileImage}
-              onChange={(e) => updatePersonalInfo("profileImage", e.target.value)}
+              type="file"
+              accept="image/*"
+              onChange={(e) => {
+                const file = e.target.files[0];
+                if (file) {
+                  const reader = new FileReader();
+                  reader.onloadend = () => {
+                    updatePersonalInfo("profileImage", reader.result); // base64 string
+                  };
+                  reader.readAsDataURL(file);
+                }
+              }}
             />
+            {/* Preview */}
+            {profileImage && (
+              <img
+                src={profileImage}
+                alt="Profile Preview"
+                className="mt-2 w-20 h-20 rounded-full object-cover border"
+              />
+            )}
           </div>
         </CardContent>
       )}

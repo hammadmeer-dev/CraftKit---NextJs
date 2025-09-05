@@ -6,7 +6,7 @@ import { ChevronUp, ChevronDown } from "lucide-react";
 import { useResumeStore } from "../../Store/resumeStore";
 
 export const HobbySection = () => {
-  const [isExpanded, setIsExpanded] = useState(true); // 🔹 local expand/collapse state
+  const [isExpanded, setIsExpanded] = useState(false); // 🔹 local expand/collapse state
 
   // 🔹 Get hobby from the store
   const hobby = useResumeStore((s) => s.resume.data.hobby);

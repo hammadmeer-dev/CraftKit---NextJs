@@ -6,7 +6,7 @@ import { ChevronUp, ChevronDown } from "lucide-react";
 import { useResumeStore } from "../../Store/resumeStore";
 
 export const SummarySection = () => {
-  const [isExpanded, setIsExpanded] = useState(true); // 🔹 local expand/collapse state
+  const [isExpanded, setIsExpanded] = useState(false); // 🔹 local expand/collapse state
 
   // 🔹 Get summary from the store
   const summary = useResumeStore((s) => s.resume.data.summary);

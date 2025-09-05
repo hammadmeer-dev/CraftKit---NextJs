@@ -4,20 +4,31 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ChevronUp, ChevronDown, Plus, Trash2, Check } from "lucide-react";
-import { generateId, loadResumes, saveResume } from "@/utils/resumeStorage";
+import { generateId } from "@/utils/resumeStorage";
 import { useResumeStore } from "@/app/Store/resumeStore";
 
 export const AchievementsSection = () => {
-    const achivements = useResumeStore((s) => s.resume.data.achievements || []);
-  const [items, setItems] = useState([]);
+  const achievements = useResumeStore((s) => s.resume.data.achievements || []);
   const [isExpanded, setIsExpanded] = useState(false);
   const [saveStatus, setSaveStatus] = useState("All changes saved");
 
   const toggleSection = () => setIsExpanded(!isExpanded);
 
+  // 🔹 Update achievements list in Zustand
+  const updateAchievements = (newItems) => {
+    useResumeStore.setState((state) => ({
+      resume: {
+        ...state.resume,
+        data: {
+          ...state.resume.data,
+          achievements: newItems,
+        },
+      },
+    }));
+  };
   const addEntry = () => {
-    setItems([
-      ...items,
+    updateAchievements([
+      ...achievements,
       {
         id: generateId(),
         title: "",
@@ -30,8 +41,8 @@ export const AchievementsSection = () => {
   };
 
   const updateEntry = (id, field, value) => {
-    setItems(
-      items.map((item) =>
+    updateAchievements(
+      achievements.map((item) =>
         item.id === id ? { ...item, [field]: value } : item
       )
     );
@@ -39,25 +50,18 @@ export const AchievementsSection = () => {
   };
 
   const deleteEntry = (id) => {
-    setItems(items.filter((item) => item.id !== id));
+    updateAchievements(achievements.filter((item) => item.id !== id));
     setSaveStatus("Unsaved changes");
   };
 
-const submitEntry = (id) => {
-  useResumeStore.setState((state) => ({
-    resume: {
-      ...state.resume,
-      data: {
-        ...state.resume.data,
-        achievements: state.resume.data.achievements.map((item) =>
-          item.id === id ? { ...item, submitted: true } : item
-        ),
-      },
-    },
-  }));
-  setSaveStatus("Saved changes");
-};
-
+  const submitEntry = (id) => {
+    updateAchievements(
+      achievements.map((item) =>
+        item.id === id ? { ...item, submitted: true } : item
+      )
+    );
+    setSaveStatus("Saved changes");
+  };
 
   return (
     <Card className="mb-4">
@@ -70,7 +74,7 @@ const submitEntry = (id) => {
 
       {isExpanded && (
         <CardContent className="space-y-4">
-          {items.map((item) => (
+          {achievements.map((item) => (
             <div
               key={item.id}
               className={`p-4 border rounded-lg space-y-2 transition-colors ${

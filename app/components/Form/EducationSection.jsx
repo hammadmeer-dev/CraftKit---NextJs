@@ -8,7 +8,7 @@ import { useResumeStore } from "../../Store/resumeStore";
 import { generateId } from "@/utils/resumeStorage"; // 🔹 same helper as WorkSection
 
 export const EducationSection = () => {
-  const [isExpanded, setIsExpanded] = useState(true);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   // 🔹 load data from store
   const education = useResumeStore(

@@ -7,7 +7,7 @@ import { ChevronDown, ChevronUp } from "lucide-react";
 import { useResumeStore } from "../../Store/resumeStore";
 
 export const PersonalInfoSection = () => {
-  const [isExpanded, setIsExpanded] = useState(true); // 🔹 state to toggle
+  const [isExpanded, setIsExpanded] = useState(false); // 🔹 state to toggle
 
   // 🔹 Access fields one by one
   const fullName = useResumeStore((s) => s.resume.data.personalInfo.fullName);

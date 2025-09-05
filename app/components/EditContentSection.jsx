@@ -25,6 +25,7 @@ import { CertificationsSection } from "./Form/CertificationsSection";
 import { AchievementsSection } from "./Form/AchievementsSection";
 import { HobbySection } from "./Form/HobbySection";
 import { saveResume } from "@/utils/resumeStorage";
+import LanguageSection from "./Form/LanguageSection";
 
 const EditContentSection = ({ onExportPDF }) => {
   const { resume,setResume } =
@@ -123,6 +124,7 @@ const EditContentSection = ({ onExportPDF }) => {
         <HobbySection />
         <WorkExperienceSection />
         <EducationSection />
+        <LanguageSection />
         <SkillsSection />
         <ProjectsSection />
         <CertificationsSection />

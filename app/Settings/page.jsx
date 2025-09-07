@@ -61,7 +61,7 @@ export default function Settings() {
               Application Information
             </h2>
             <p className="text-sm text-gray-500 mb-4">
-              Details about the ResuCraft application.
+              Details about the CraftKit application.
             </p>
 
             <div className="flex items-center justify-between py-2">

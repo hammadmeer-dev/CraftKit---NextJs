@@ -19,6 +19,9 @@ export const metadata = {
     default: "CraftKit – Free ATS Friendly Resume Builder",
     template: "%s | CraftKit", // every page can override
   },
+  verification: {
+    google: "7sfKXKSH7wNEN3rKoeWTTUnoBqOy4qKP38PogPuC12Q",
+  },
   description:
     "Build beautiful, ATS-friendly resumes for free with CraftKit. Export to PDF instantly.",
   keywords: [
@@ -68,6 +71,7 @@ export const metadata = {
   },
   manifest: "/site.webmanifest",
 };
+
 
 
 export default function RootLayout({ children }) {

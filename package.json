@@ -2,12 +2,13 @@
   "name": "craftkit",
   "version": "0.1.0",
   "private": true,
-  "scripts": {
-    "dev": "next dev --turbopack",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
-  },
+"scripts": {
+  "dev": "next dev --turbopack",
+  "build": "next build",
+  "postbuild": "next-sitemap", 
+  "start": "next start",
+  "lint": "next lint"
+},
   "dependencies": {
     "@radix-ui/react-label": "^2.1.7",
     "@radix-ui/react-progress": "^1.1.7",
@@ -23,6 +24,7 @@
     "jspdf": "^3.0.2",
     "lucide-react": "^0.539.0",
     "next": "15.4.6",
+    "next-sitemap": "^4.2.3",
     "puppeteer": "^24.19.0",
     "react": "19.1.0",
     "react-dom": "19.1.0",

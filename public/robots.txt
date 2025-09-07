@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://craftkit.netlify.app
+
+# Sitemaps
+Sitemap: https://craftkit.netlify.app/sitemap.xml

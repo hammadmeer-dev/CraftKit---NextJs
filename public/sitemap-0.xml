@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:news="http://www.google.com/schemas/sitemap-news/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:mobile="http://www.google.com/schemas/sitemap-mobile/1.0" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
+<url><loc>https://craftkit.netlify.app/Blog</loc><lastmod>2025-09-07T20:47:40.699Z</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+<url><loc>https://craftkit.netlify.app/Dashboard</loc><lastmod>2025-09-07T20:47:40.701Z</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+<url><loc>https://craftkit.netlify.app/ResumeEditor</loc><lastmod>2025-09-07T20:47:40.701Z</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+<url><loc>https://craftkit.netlify.app/AboutPage</loc><lastmod>2025-09-07T20:47:40.701Z</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+<url><loc>https://craftkit.netlify.app/Settings</loc><lastmod>2025-09-07T20:47:40.701Z</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+<url><loc>https://craftkit.netlify.app</loc><lastmod>2025-09-07T20:47:40.701Z</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+<url><loc>https://craftkit.netlify.app/Templates</loc><lastmod>2025-09-07T20:47:40.701Z</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+</urlset>

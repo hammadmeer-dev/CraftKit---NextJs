@@ -1,5 +1,6 @@
 // app/Templates/TemplateRegistry.js
 import CreativeResume from "./[name]/Creative";
+import FormalResumeTemplate from "./[name]/Formal";
 import ModernTemplate from "./[name]/modern";
 
 export const templates = [
@@ -18,11 +19,11 @@ export const templates = [
     component: CreativeResume,
   },
   {
-    id: "technical",
-    name: "Technical Resume",
+    id: "formal",
+    name: "Formal Resume",
     description: "Perfect for developers and engineers.",
     category: "Technical",
-    component: () => <div>Technical Template Coming Soon</div>,
+    component: FormalResumeTemplate,
   },
 ];
 

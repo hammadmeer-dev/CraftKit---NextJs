@@ -18,6 +18,8 @@ export const useResumeStore = create((set) => ({
         dateOfBirth: "",
         maritalStatus: "",
         portfolioWebsite: "",
+        linkedInLink: "",
+        githubLink: "",
         profileImage: "",
       },
       hobby: "",

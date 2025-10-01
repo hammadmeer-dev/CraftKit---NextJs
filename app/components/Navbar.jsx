@@ -21,7 +21,7 @@ function Navbar() {
         </nav>
         <div className="flex items-center gap-3">
           <Button
-            className="bg-primary text-black px-4 py-1 hover:bg-primary/90"
+            className="bg-primary text-white px-4 py-1 hover:bg-primary/90"
             onClick={() => router.push("/Dashboard")}
           >
             Dashboard

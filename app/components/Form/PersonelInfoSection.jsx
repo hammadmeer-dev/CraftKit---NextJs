@@ -20,6 +20,12 @@ export const PersonalInfoSection = () => {
   const portfolioWebsite = useResumeStore(
     (s) => s.resume.data.personalInfo.portfolioWebsite
   );
+  const githubLink = useResumeStore(
+    (s) => s.resume.data.personalInfo.githubLink
+  );
+    const linkedInLink = useResumeStore(
+    (s) => s.resume.data.personalInfo.linkedInLink
+  );
   const profileImage = useResumeStore(
     (s) => s.resume.data.personalInfo.profileImage
   );
@@ -117,6 +123,24 @@ export const PersonalInfoSection = () => {
               value={portfolioWebsite}
               onChange={(e) =>
                 updatePersonalInfo("portfolioWebsite", e.target.value)
+              }
+            />
+          </div>
+          <div>
+            <Label className="pb-2">LinkedIn Profile</Label>
+            <Input
+              value={linkedInLink || " "}
+              onChange={(e) =>
+                updatePersonalInfo("linkedInLink", e.target.value)
+              }
+            />
+          </div>
+          <div>
+            <Label className="pb-2">Github Profile</Label>
+            <Input
+              value={githubLink || " "}
+              onChange={(e) =>
+                updatePersonalInfo("githubLink", e.target.value)
               }
             />
           </div>
